@@ -1,4 +1,4 @@
-file(GLOB SOURCES_AND_HEADERS "*.cpp" "include/*.h")
+file(GLOB SOURCES_AND_HEADERS "*.cpp" "*.hpp")
 
 add_executable(hello_world main.cpp ${SOURCES_AND_HEADERS})
 

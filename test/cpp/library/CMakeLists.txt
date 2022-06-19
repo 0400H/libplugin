@@ -1,6 +1,6 @@
 project(library)
 
-file(GLOB SOURCES_AND_HEADERS "*.cpp" "include/*.h")
+file(GLOB SOURCES_AND_HEADERS "*.cpp" "*.hpp")
 
 # include_directories(${PROJECT_ROOT}/include)
 
