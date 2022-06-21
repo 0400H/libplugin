@@ -28,7 +28,7 @@ echo -e 'using PYTHONPATH='${PYTHONPATH}
 # alias BIND_CPU_MEM="taskset -c ${CORE_RANGE} numactl -l"
 alias BIND_CPU_MEM="taskset -c ${CORE_RANGE}"
 
-LOG_DIR=logs
+LOG_DIR=`pwd -P`/logs
 mkdir -p ${LOG_DIR}
 
 cd build/test/cpp/library && BIND_CPU_MEM ./test_library -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
