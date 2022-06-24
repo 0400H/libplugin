@@ -4,11 +4,11 @@
 #include <mutex>
 #include <dlfcn.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+// #ifdef __cplusplus
+// extern "C" {
+// #endif
 
-namespace plugin {
+namespace libplugin {
 
 class library {
 public:
@@ -29,8 +29,8 @@ private:
 
 }
 
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif
 
 #endif
