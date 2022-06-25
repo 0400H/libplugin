@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(gabime_spdlog C CXX)
-
 set(SPDLOG_ROOT ${CMAKE_BINARY_DIR}/3rdparty/gabime_spdlog)
 set(SPDLOG_SOURCE ${SPDLOG_ROOT}/src/gabime_spdlog)
 set(SPDLOG_INSTALL_PREFIX ${SPDLOG_ROOT}/install)

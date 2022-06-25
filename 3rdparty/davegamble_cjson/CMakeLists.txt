@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(davegamble_cjson C CXX)
-
 set(CJSON_ROOT ${CMAKE_BINARY_DIR}/3rdparty/davegamble_cjson)
 set(CJSON_SOURCE ${CJSON_ROOT}/src/davegamble_cjson)
 set(CJSON_INSTALL ${CJSON_ROOT}/install)

@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(fmtlib_fmt C CXX)
-
 set(FMT_ROOT ${CMAKE_BINARY_DIR}/3rdparty/fmtlib_fmt)
 set(FMT_SOURCE ${FMT_ROOT}/src/fmtlib_fmt)
 set(FMT_INSTALL ${FMT_ROOT}/install)

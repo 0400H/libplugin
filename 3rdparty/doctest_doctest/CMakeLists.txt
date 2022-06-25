@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(doctest_doctest C CXX)
-
 set(DOCTEST_ROOT ${CMAKE_BINARY_DIR}/3rdparty/doctest_doctest)
 set(DOCTEST_SOURCE ${DOCTEST_ROOT}/src/doctest_doctest)
 set(DOCTEST_INSTALL ${DOCTEST_ROOT}/install)

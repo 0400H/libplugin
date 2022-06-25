@@ -1,16 +1,22 @@
 project(src)
 
-set(GLOBAL_SOURCES_AND_HEADERS "" CACHE STRING "source files")
+set(SRC_SOURCES_AND_HEADERS "" CACHE STRING "src source files")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(core)
 add_subdirectory(cpp)
 
-message("files: ${GLOBAL_SOURCES_AND_HEADERS}")
-add_library(plugin SHARED STATIC ${GLOBAL_SOURCES_AND_HEADERS})
+message("src source files: ${SRC_SOURCES_AND_HEADERS}")
+add_library(plugin SHARED STATIC ${SRC_SOURCES_AND_HEADERS})
+
+add_dependencies(plugin fmtlib_fmt)
+add_dependencies(plugin gabime_spdlog)
+add_dependencies(plugin davegamble_cjson)
+
 target_link_libraries(plugin PRIVATE dl)
 
 install(TARGETS plugin
-        EXPORT libplugin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin

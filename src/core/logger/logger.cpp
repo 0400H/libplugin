@@ -2,7 +2,6 @@
 #include <string.h>
 #include <algorithm>
 
-#include <spdlog/spdlog.h>
 #include "logger.hpp"
 
 namespace libplugin {
@@ -37,9 +36,9 @@ int get_log_level(const char* env) {
     return log_level;
 }
 
-void set_logger_level() {
-    auto env = getenv("LIBPLUGIN_LOG_LEVEL");
-    auto level = get_log_level(env);
+void set_logger_level(const char* env) {
+    auto env_value = getenv(env);
+    auto level = get_log_level(env_value);
     auto log_level = spdlog::level::info;
     switch (level) {
         case 0:
@@ -65,7 +64,7 @@ void set_logger_level() {
             break;
     }
     spdlog::set_level(log_level);
-    spdlog::debug(fmt::format("LIBPLUGIN_LOG_LEVEL = {}", env));
+    spdlog::debug(fmt::format("${} = {}", env, env_value));
 }
 
 }

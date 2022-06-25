@@ -1,10 +1,6 @@
 #include "libplugin/library.hpp"
-// #include "library_sal.hpp"
-#include "../logger/logger.hpp"
+#include "library_sal.hpp"
 
-#include <spdlog/spdlog.h>
-
-#include <dlfcn.h>
 #include <string>
 #include <stdexcept>
 

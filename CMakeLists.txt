@@ -23,29 +23,29 @@ project(${PROJECT_NAME} C CXX)
 # --------------------------------------------------------------------
 
 # set project version
-execute_process(COMMAND
-                cat "VERSION"
-                WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-                OUTPUT_VARIABLE PROJECT_VERSION
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(PROJECT_VERSION ${PROJECT_VERSION})
+file(STRINGS "VERSION" FILE_VERSION)
+set(PROJECT_VERSION ${FILE_VERSION})
+string(REPLACE "." ";" VERSION_LIST ${PROJECT_VERSION})
+list(GET VERSION_LIST 0 VERSION_MAJOR)
+list(GET VERSION_LIST 1 VERSION_MINOR)
+list(GET VERSION_LIST 2 VERSION_PATCH)
 
 # set project library name
 set(PROJECT_LIBRARY_NAME "plugin")
 
 # set modules dir
 set(PROJECT_ROOT ${PROJECT_SOURCE_DIR})
-set(PROJECT_SRC ${PROJECT_ROOT}/src)
 set(PROJECT_CMAKE ${PROJECT_ROOT}/cmake)
 set(PROJECT_INCLUDE ${PROJECT_ROOT}/include)
+set(PROJECT_SRC ${PROJECT_ROOT}/src)
 set(PROJECT_TEST ${PROJECT_ROOT}/test)
 set(PROJECT_EXAMPLES ${PROJECT_ROOT}/examples)
 set(PROJECT_3RDPARTY ${PROJECT_ROOT}/3rdparty)
 
 # set build dir
-set(PROJECT_BUILD ${PROJECT_ROOT}/build)
-set(LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BUILD}/lib)
-set(RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BUILD}/output)
+# set(PROJECT_BUILD ${PROJECT_ROOT}/build)
+# set(LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BUILD}/lib)
+# set(RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BUILD}/output)
 
 # --------------------------------------------------------------------
 # section: cmake options
@@ -59,6 +59,7 @@ option(Build_PROCESSOR_ARCH "Export compile command to json." "x86_64")
 option(BUILD_LIB_TYPE "Build project lib type." "static")
 
 # set internal components
+option(BUILD_DOC "Build project doc components." OFF)
 option(BUILD_TEST "Build project test components." ON)
 option(BUILD_EXAMPLES "Build project examples components." OFF)
 
@@ -69,13 +70,12 @@ option(BUILD_EXAMPLES "Build project examples components." OFF)
 include(${PROJECT_CMAKE}/colors.cmake)
 include(${PROJECT_CMAKE}/utils.cmake)
 include(${PROJECT_CMAKE}/compiler/compiler.cmake)
-include(cmake/status.cmake)
+include(${PROJECT_CMAKE}/status.cmake)
 
 # --------------------------------------------------------------------
 # section: find and include 3rdparty modules
 # --------------------------------------------------------------------
 
-include(${PROJECT_3RDPARTY}/CMakeLists.txt)
 include(${PROJECT_3RDPARTY}/fmtlib_fmt/CMakeLists.txt)
 include(${PROJECT_3RDPARTY}/gabime_spdlog/CMakeLists.txt)
 include(${PROJECT_3RDPARTY}/davegamble_cjson/CMakeLists.txt)
@@ -84,13 +84,13 @@ include(${PROJECT_3RDPARTY}/davegamble_cjson/CMakeLists.txt)
 # section: add header dirs to search path
 # --------------------------------------------------------------------
 
-include_directories(${PROJECT_ROOT})
 include_directories(${PROJECT_INCLUDE})
 
 # --------------------------------------------------------------------
 # section: add source dirs to build path
 # --------------------------------------------------------------------
 
+add_subdirectory(${PROJECT_INCLUDE})
 add_subdirectory(${PROJECT_SRC})
 
 if(BUILD_TEST)
@@ -99,4 +99,8 @@ endif()
 
 if(BUILD_EXAMPLES)
     add_subdirectory(${PROJECT_EXAMPLES})
+endif()
+
+if(BUILD_DOC)
+    add_subdirectory(${PROJECT_DOC})
 endif()
