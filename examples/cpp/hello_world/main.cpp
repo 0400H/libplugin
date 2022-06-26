@@ -8,8 +8,6 @@
 // #include <fmt/printf.h>
 // #include <fmt/os.h>
 
-#include "plugin.hpp"
-
 int main() {
     spdlog::info(fmt::format("{}.", "i love c++"));
 

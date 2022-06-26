@@ -9,7 +9,7 @@
 #include "test_lib/test_lib.hpp"
 
 TEST_CASE("library") {
-    spdlog::set_level(spdlog::level::debug);
+    // spdlog::set_level(spdlog::level::debug);
     spdlog::info(fmt::format("start to test {}.", "doctest, fmt and spdlog"));
 
     class libplugin::library lib("test_lib/libtest_lib.so", RTLD_LAZY);

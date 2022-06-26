@@ -19,11 +19,11 @@ library::~library() {
 
 void library::open(const char* file, int mode) {
     std::lock_guard<std::mutex> lock(this->mutex);
-    spdlog::debug(fmt::format("library::open({}, {}).", file, mode));
+    spdlog::debug(fmt::format("library::open({}, {}).\n", file, mode));
     this->handle = dlopen(file, mode);
     auto error = dlerror();
     if (error != nullptr || this->handle == nullptr) {
-        auto err_msg = fmt::format("dlopen({}, {}) error: {}.", file, mode, error);
+        auto err_msg = fmt::format("dlopen({}, {}) error: {}.\n", file, mode, error);
         spdlog::error(err_msg);
         throw std::runtime_error(err_msg);
     }
@@ -42,7 +42,8 @@ void* library::get_func(const char* name) {
     auto func = dlsym(this->handle, name);
     auto error = dlerror();
     if (error != nullptr || this->handle == nullptr) {
-        throw std::runtime_error("dlsym " + std::string(name) + " error, " + std::string(error));
+        auto err_msg = fmt::format("dlsym({}, {}) error: {}.\n", this->handle, name, error);
+        throw std::runtime_error(err_msg);
         return nullptr;
     } else {
         return func;

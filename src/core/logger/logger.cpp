@@ -1,12 +1,12 @@
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <algorithm>
 
 #include "logger.hpp"
 
 namespace libplugin {
 
-bool cmp_value(const char* arg1, const char* arg2) {
+bool cmp_string(const char* arg1, const char* arg2) {
     if (arg1 == nullptr || arg1 == nullptr) {
         return false;
     } else {
@@ -16,21 +16,21 @@ bool cmp_value(const char* arg1, const char* arg2) {
 
 int get_log_level(const char* env) {
     int log_level = 2;
-    if (env == nullptr || cmp_value(env, "")) {
+    if (env == nullptr || cmp_string(env, "")) {
         log_level = 2;
-    } else if (cmp_value(env, "trace") ||  cmp_value(env, "TRACE")) {
+    } else if (cmp_string(env, "trace") ||  cmp_string(env, "TRACE")) {
         log_level = 0;
-    } else if (cmp_value(env, "debug") || cmp_value(env, "DEBUG")) {
+    } else if (cmp_string(env, "debug") || cmp_string(env, "DEBUG")) {
         log_level = 1;
-    } else if (cmp_value(env, "info") || cmp_value(env, "INFO")) {
+    } else if (cmp_string(env, "info") || cmp_string(env, "INFO")) {
         log_level = 2;
-    } else if (cmp_value(env, "warn") || cmp_value(env, "WARN")) {
+    } else if (cmp_string(env, "warn") || cmp_string(env, "WARN")) {
         log_level = 3;
-    } else if (cmp_value(env, "error") || cmp_value(env, "ERROR")) {
+    } else if (cmp_string(env, "error") || cmp_string(env, "ERROR")) {
         log_level = 4;
-    } else if (cmp_value(env, "critical") || cmp_value(env, "CRITICAL")) {
+    } else if (cmp_string(env, "critical") || cmp_string(env, "CRITICAL")) {
         log_level = 5;
-    } else if (cmp_value(env, "off") || cmp_value(env, "OFF")) {
+    } else if (cmp_string(env, "off") || cmp_string(env, "OFF")) {
         log_level = 6;
     };
     return log_level;
@@ -64,7 +64,8 @@ void set_logger_level(const char* env) {
             break;
     }
     spdlog::set_level(log_level);
-    spdlog::debug(fmt::format("${} = {}", env, env_value));
+    auto msg = fmt::format("env {} = {}\n", env, env_value?env_value:"");
+    spdlog::debug(msg);
 }
 
 }
