@@ -1,0 +1,7 @@
+namespace libplugin {
+
+class container {
+
+};
+
+}

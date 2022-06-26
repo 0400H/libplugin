@@ -2,7 +2,7 @@ project(library)
 
 file(GLOB SOURCES_AND_HEADERS "*.cpp" "*.hpp")
 
-# include_directories(${PROJECT_ROOT}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(test_lib)
 

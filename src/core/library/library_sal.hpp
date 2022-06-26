@@ -1,8 +1,6 @@
-
-#include <core/logger/logger.hpp>
-
 #ifdef __linux__
     // linux
+    #include<dlfcn.h>
 #elif defined(_WIN64) || defined(_WIN32)
     #define dlclose(args) FreeLibrary(args)
     #define dlclose_func_name "FreeLibrary"

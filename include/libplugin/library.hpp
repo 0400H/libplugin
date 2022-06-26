@@ -4,6 +4,8 @@
 #include <mutex>
 #include <dlfcn.h>
 
+#include "status.hpp"
+
 // #ifdef __cplusplus
 // extern "C" {
 // #endif
@@ -15,7 +17,7 @@ public:
     library();
     library(const char*, int);
     ~library();
-    void open(const char*, int);
+    status open(const char*, int);
     void close();
     void* get_func(const char*);
     void* get_handle();

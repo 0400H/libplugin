@@ -2,7 +2,8 @@
 #include <string>
 #include <algorithm>
 
-#include "logger.hpp"
+#include "core/utils.hpp"
+#include "libplugin/logger.hpp"
 
 namespace libplugin {
 
@@ -14,7 +15,7 @@ bool cmp_string(const char* arg1, const char* arg2) {
     }
 }
 
-int get_log_level(const char* env) {
+int get_logger_level(const char* env) {
     int log_level = 2;
     if (env == nullptr || cmp_string(env, "")) {
         log_level = 2;
@@ -38,7 +39,7 @@ int get_log_level(const char* env) {
 
 void set_logger_level(const char* env) {
     auto env_value = getenv(env);
-    auto level = get_log_level(env_value);
+    auto level = get_logger_level(env_value);
     auto log_level = spdlog::level::info;
     switch (level) {
         case 0:
@@ -61,6 +62,9 @@ void set_logger_level(const char* env) {
             break;
         case 6:
             log_level = spdlog::level::off;
+            break;
+        default:
+            log_level = spdlog::level::info;
             break;
     }
     spdlog::set_level(log_level);
