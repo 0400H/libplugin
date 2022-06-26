@@ -1,3 +1,6 @@
+#ifndef LIBPLUGIN_PLUGIN_H
+#define LIBPLUGIN_PLUGIN_H
+
 #include "plugin_base.hpp"
 
 #include "container.hpp"
@@ -8,3 +11,5 @@
 namespace libplugin {
 
 }
+
+#endif

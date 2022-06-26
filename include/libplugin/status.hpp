@@ -1,3 +1,6 @@
+#ifndef LIBPLUGIN_STATUS_H
+#define LIBPLUGIN_STATUS_H
+
 #include <string>
 #include <vector>
 
@@ -20,3 +23,5 @@ std::vector<std::string> parse_status(status code);
 std::vector<std::string> print_status(status code);
 
 }
+
+#endif

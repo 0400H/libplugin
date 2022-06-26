@@ -1,5 +1,5 @@
-#ifndef library_H
-#define library_H
+#ifndef LIBPLUGIN_LIBRARY_H
+#define LIBPLUGIN_LIBRARY_H
 
 #include <mutex>
 #include <dlfcn.h>

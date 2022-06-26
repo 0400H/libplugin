@@ -9,8 +9,8 @@ namespace libplugin {
         return ret;
     };
 
-    std::shared_ptr<libplugin::container> plugin_base::get_container() {
-        return this->registry->get_container();
+    std::shared_ptr<libplugin::container> plugin_base::view_all() {
+        return this->registry->view_all();
     };
 
 }

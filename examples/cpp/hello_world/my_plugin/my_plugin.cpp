@@ -14,7 +14,7 @@ public:
     };
 
     libplugin::status init() {
-        // create func register
+        // create func registry
         this->registry = std::make_shared<libplugin::registry>();
 
         // load libs
@@ -32,30 +32,30 @@ public:
 
         // register funcs
         // func list, override mode, strict mode
-        auto status = this->reg->register_funcs(hello_func_list, false, false);
+        auto status = this->registry->register_funcs(hello_func_list, false, false);
         print_status(status);
 
-        status |= this->reg->register_funcs(world_func_list, true, false);
+        status |= this->registry->register_funcs(world_func_list, true, false);
         print_status(status);
 
-        status = this->reg.unload_func();
+        status = this->registry.unload_func();
         print_status(status);
 
-        status |= this->reg->register_func(hello_world_func, false, true);
+        status |= this->registry->register_func(hello_world_func, false, true);
         print_status(status);
 
-        // get func container from register
-        this->funcs = this->reg->list_all();
+        // get func container from registry
+        auto funcs = this->registry->list_all();
 
         // list funcs in func container
-        this->funcs->list_all();
+        funcs->list_all();
         return status;
     };
 
     libplugin::status unload_all() {
         auto status_code = S_Success;
         if (this->registry) {
-            status_code |= this->reg.unload_all();
+            status_code |= this->registry.unload_all();
         };
         if (this->factory) {
             status_code |= this->factory.unload_all();
@@ -75,9 +75,7 @@ public:
     };
 
 private:
-    std::shared_ptr<libplugin::container> funcs = nullptr;
-    std::shared_ptr<libplugin::register> reg = nullptr;
-    // std::shared_ptr<libplugin::factory> hello = nullptr;
+    std::shared_ptr<libplugin::factory> factory = nullptr;
     std::shared_ptr<libplugin::library> hello = nullptr;
     std::shared_ptr<libplugin::library> world = nullptr;
 };

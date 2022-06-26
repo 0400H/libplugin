@@ -1,3 +1,6 @@
+#ifndef LIBPLUGIN_PLUGIN_BASE_H
+#define LIBPLUGIN_PLUGIN_BASE_H
+
 #include <memory>
 #include <string>
 
@@ -9,12 +12,14 @@ namespace libplugin {
 
 class plugin_base {
 public:
-    virtual libplugin::status init() = 0;
-    virtual libplugin::status release() = 0;
-    virtual libplugin::status export_lib(const char *);
-    virtual std::shared_ptr<libplugin::container> plugin_base::get_container();
+    virtual status init() = 0;
+    virtual status release() = 0;
+    virtual status export_lib(const char *);
+    virtual std::shared_ptr<container> plugin_base::view_all();
 protected:
-    std::shared_ptr<libplugin::registry> registry = nullptr;
+    std::shared_ptr<registry> registry = nullptr;
 };
 
 }
+
+#endif

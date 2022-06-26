@@ -1,3 +1,6 @@
+#ifndef LIBPLUGIN_LOGGER_H
+#define LIBPLUGIN_LOGGER_H
+
 namespace libplugin {
 
 const char* get_environment(const char* env);
@@ -9,3 +12,5 @@ int get_logger_level(const char* env);
 void set_logger_level(const char* env="LIBPLUGIN_LOG_LEVEL");
 
 }
+
+#endif
