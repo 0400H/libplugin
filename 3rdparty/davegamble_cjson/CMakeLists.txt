@@ -33,3 +33,4 @@ ExternalProject_Add(davegamble_cjson
 
 ExternalProject_Get_Property(cjson)
 include_directories(${CJSON_INCLUDE})
+link_directories(${CJSON_LIBRARY})

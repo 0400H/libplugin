@@ -32,6 +32,7 @@ ExternalProject_Add(gabime_spdlog
 
 ExternalProject_Get_Property(gabime_spdlog)
 include_directories(${SPDLOG_INCLUDE})
+link_directories(${SPDLOG_LIBRARY})
 
 # include(FetchContent)
 # FetchContent_Declare(spdlog

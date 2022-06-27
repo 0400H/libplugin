@@ -33,6 +33,7 @@ ExternalProject_Add(fmtlib_fmt
 
 ExternalProject_Get_Property(fmtlib_fmt)
 include_directories(${FMT_INCLUDE})
+link_directories(${FMT_LIBRARY})
 
 # include(FetchContent)
 # FetchContent_Declare(fmt

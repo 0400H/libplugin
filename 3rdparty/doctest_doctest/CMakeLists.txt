@@ -32,6 +32,7 @@ ExternalProject_Add(doctest_doctest
 
 ExternalProject_Get_Property(doctest_doctest)
 include_directories(${DOCTEST_INCLUDE})
+link_directories(${DOCTEST_LIBRARY})
 
 # include(FetchContent)
 # FetchContent_Declare(doctest
