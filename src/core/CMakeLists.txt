@@ -12,4 +12,4 @@ add_subdirectory(registry)
 
 add_subdirectory(plugin)
 
-add_subdirectory(container)
+# add_subdirectory(container)

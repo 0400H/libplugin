@@ -1,5 +1,5 @@
 #include "cpp/utils.hpp"
-#include "libplugin/container.hpp"
+#include "libplugin/registry.hpp"
 
 #include <string>
 #include <typeinfo>
@@ -24,21 +24,21 @@ std::shared_ptr<object> create_object(std::string value) {
 
 };
 
-TEST_CASE("container") {
+TEST_CASE("registry") {
     spdlog::set_level(spdlog::level::debug);
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
 
-    auto container = std::make_shared<libplugin::container>();
+    auto registry = std::make_shared<libplugin::registry>();
 
     auto type_value = type_name(space::value);
     auto type_object = type_name(space::create_object);
     spdlog::info(fmt::format("{} {}", type_value, type_object));
 
-    container->insert(type_value, &space::value);;
-    container->insert(type_object, &space::create_object);
+    registry->register_arg(type_value, &space::value, 0);
+    registry->register_arg(type_object, &space::create_object, 1);
 
-    auto value = type_cast(&space::value, container->get(type_value));
-    auto object = type_cast(&space::create_object, container->get(type_object));
+    auto value = type_cast(&space::value, registry->view(type_value));
+    auto object = type_cast(&space::create_object, registry->view(type_object));
 
     space::value = 1;
     *value = -1;
