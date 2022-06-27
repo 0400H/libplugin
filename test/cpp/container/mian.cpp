@@ -11,14 +11,15 @@ namespace space {
 int value = -1;
 
 std::string func(std::string arg) {
-    spdlog::info(arg);
+    spdlog::debug(arg);
     return arg;
 };
 
 };
 
 TEST_CASE("container") {
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::info);
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
 
     auto container = std::make_shared<libplugin::container>();
     auto type_value = type_name(space::value);
