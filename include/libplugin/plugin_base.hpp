@@ -14,7 +14,7 @@ public:
     virtual status init() = 0;
     virtual status release() = 0;
     virtual status export_lib(const char *);
-    virtual std::unordered_map<std::string, std::any> view_all();
+    virtual symbols view_all();
 protected:
     std::shared_ptr<registry> registry = nullptr;
 };

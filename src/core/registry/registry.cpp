@@ -25,7 +25,7 @@ status registry::register_arg(std::string type, std::any arg, int mode) {
     return ret;
 };
 
-status registry::register_args(std::unordered_map<std::string, std::any> args, int mode) {
+status registry::register_args(symbols args, int mode) {
     for (auto arg : args) {
         this->register_arg(arg.first, arg.second, mode);
     };
@@ -44,11 +44,18 @@ status registry::unload_args(std::vector<std::string> types) {
     return S_Success;
 };
 
+status registry::unload_all() {
+    for (auto pair : this->container) {
+        this->unload_arg(pair.first);
+    };
+    return S_Success;
+};
+
 std::any registry::view(std::string type) {
     return this->container.at(type);
 };
 
-std::unordered_map<std::string, std::any> registry::view_all() {
+symbols registry::view_all() {
     return this->container;
 };
 
@@ -58,7 +65,7 @@ std::string cxx_demangle(const char* name) {
     int status;
     char *ret;
     try {
-        ret =  abi::__cxa_demangle(name, buffer, &size, &status);
+        ret = abi::__cxa_demangle(name, buffer, &size, &status);
         if(ret) {
             return std::string(ret);
         } else {

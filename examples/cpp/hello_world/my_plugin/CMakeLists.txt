@@ -1,0 +1,12 @@
+file(GLOB SOURCES_AND_HEADERS "*.cpp" "*.hpp")
+
+if(NOT "${TEST_SOURCES_AND_HEADERS}" MATCHES "${SOURCES_AND_HEADERS}")
+    set(TEST_SOURCES_AND_HEADERS
+        "${SOURCES_AND_HEADERS};${TEST_SOURCES_AND_HEADERS}"
+        CACHE
+        STRING
+        "change TEST_SOURCES_AND_HEADERS"
+        FORCE)
+endif()
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})

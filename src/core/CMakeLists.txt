@@ -11,5 +11,3 @@ add_subdirectory(factory)
 add_subdirectory(registry)
 
 add_subdirectory(plugin)
-
-# add_subdirectory(container)

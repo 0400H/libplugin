@@ -61,7 +61,7 @@ option(BUILD_LIB_TYPE "Build project lib type." "static")
 # set internal components
 option(BUILD_DOC "Build project doc components." OFF)
 option(BUILD_TEST "Build project test components." ON)
-option(BUILD_EXAMPLES "Build project examples components." OFF)
+option(BUILD_EXAMPLES "Build project examples components." ON)
 
 # --------------------------------------------------------------------
 # section: cmake configuration and show status

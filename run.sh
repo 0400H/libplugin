@@ -35,7 +35,4 @@ cd build/test/cpp/library && BIND_CPU_MEM ./test_library -s 2>&1 | tee -a ${LOG_
 
 cd build/test/cpp/registry && BIND_CPU_MEM ./test_registry -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
 
-# BIND_CPU_MEM build/examples/cpp/hello_world/hello_world 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log
-
-# # https://github.com/google/benchmark/blob/main/docs/user_guide.md
-# BIND_CPU_MEM build/benchmark/cpp/sleep/benchmark_sleep --benchmark_format=console --benchmark_repetitions=1 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log
+cd build/example/cpp/hello_world BIND_CPU_MEM ./hello_world 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log

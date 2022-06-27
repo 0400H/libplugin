@@ -11,16 +11,19 @@ namespace libplugin {
 // https://blog.csdn.net/only_1/article/details/80285212
 // https://blog.csdn.net/CaspianSea/article/details/46616819
 
+typedef std::unordered_map<std::string, std::any> symbols;
+
 class registry {
 public:
     status register_arg(std::string, std::any, int);
-    status register_args(std::unordered_map<std::string, std::any>, int);
+    status register_args(symbols, int);
     status unload_arg(std::string);
     status unload_args(std::vector<std::string>);
+    status unload_all();
     std::any view(std::string);
-    std::unordered_map<std::string, std::any> view_all();
+    symbols view_all();
 private:
-    std::unordered_map<std::string, std::any> container;
+    symbols container;
 };
 
 std::string cxx_demangle(const char*);

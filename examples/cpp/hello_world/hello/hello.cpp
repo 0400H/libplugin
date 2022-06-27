@@ -1,5 +1,10 @@
-#include "plugin.h"
+// #include "plugin.h"
+#include "stdio.h"
 
-class hello_plugin : private plugin {
+// class hello_plugin : private plugin {
 
-};
+// };
+
+void hello() {
+    printf("hello!\n");
+}
