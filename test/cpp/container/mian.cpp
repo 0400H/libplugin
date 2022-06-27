@@ -10,28 +10,39 @@ namespace space {
 
 int value = -1;
 
-std::string func(std::string arg) {
-    spdlog::debug(arg);
-    return arg;
+class object {
+public:
+    object(std::string value) {
+        this->name = value;
+    };
+    std::string name;
+};
+
+std::shared_ptr<object> create_object(std::string value) {
+    return std::make_shared<object>(value);
 };
 
 };
 
 TEST_CASE("container") {
-    spdlog::set_level(spdlog::level::info);
+    spdlog::set_level(spdlog::level::debug);
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
 
     auto container = std::make_shared<libplugin::container>();
+
     auto type_value = type_name(space::value);
-    auto type_func = type_name(space::func);
-    container->insert(type_value, &space::value);
-    container->insert(type_func, &space::func);
+    auto type_object = type_name(space::create_object);
+    spdlog::info(fmt::format("{} {}", type_value, type_object));
+
+    container->insert(type_value, &space::value);;
+    container->insert(type_object, &space::create_object);
+
     auto value = type_cast(&space::value, container->get(type_value));
-    auto func = type_cast(&space::func, container->get(type_func));
+    auto object = type_cast(&space::create_object, container->get(type_object));
 
     space::value = 1;
     *value = -1;
 
     CHECK( ((*value) == space::value) );
-    CHECK( ((*func)(type_func) == space::func(type_func)) );
+    CHECK( ((*object)(type_object)->name == space::create_object(type_object)->name) );
 }
