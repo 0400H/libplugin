@@ -2,21 +2,22 @@
 #include "my_plugin/my_plugin.hpp"
 
 int main() {
-    spdlog::info(fmt::format("{}.", "i love c++"));
+    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
 
     auto plugin_impl = std::make_shared<my_plugin>();
-    plugin_impl->init();
+    auto registry = plugin_impl->view_all();
 
-    // for (auto &func : plugin_impl.iter()) {
-    //     spdlog::info(fmt::format("register func: {}.", func.name()));
-    // };
+    for (auto& pair : registry->view_all()) {
+        spdlog::info("registered arg: {}.", pair.first);
+    };
 
-    // auto hello = plugin_impl["hello"]("type1");
-    // auto world = plugin_impl["world"]("type1", "type2");
+    auto hello_func = get_any_type_object(registry, hello);
+    auto world_func = get_any_type_object(registry, world);
+    auto plugin_func = get_any_type_object(registry, plugin);
 
-    // hello(arg1);
-    // world(arg1, arg2);
-
-    plugin_impl->release();
+    hello_func();
+    world_func();
+    plugin_func();
     return 0;
 }

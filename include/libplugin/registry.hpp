@@ -16,7 +16,7 @@ typedef std::unordered_map<std::string, std::any> symbols;
 class registry {
 public:
     status register_arg(std::string, std::any, int);
-    status register_args(symbols, int);
+    status register_args(symbols &, int);
     status unload_arg(std::string);
     status unload_args(std::vector<std::string>);
     status unload_all();
@@ -30,18 +30,28 @@ std::string cxx_demangle(const char*);
 
 }
 
-#define macro_to_string(x) std::string(#x)
+#define macro_to_string(x) \
+    std::string(#x)
 
 #define type_name(type_arg) \
     macro_to_string(type_arg) + "@" + libplugin::cxx_demangle(typeid(type_arg).name())
 
-#define type_cast(type_arg, any_arg) \
+#define any_type_cast(type_arg, any_arg) \
     std::any_cast<decltype(type_arg)>(any_arg)
 
-#define register_type_object(registry, type_arg) \
-    registry->register_arg(typename(type_arg), &type_arg)
+#define reinterpret_type_cast(type_arg, any_arg) \
+    reinterpret_cast<decltype(type_arg)>(any_arg)
 
-#define view_type_object(registry, type_arg) \
-    type_cast(&type_arg, registry->view(typename(type_arg)))
+#define register_type_object(registry, type_arg) \
+    registry->register_arg(type_name(type_arg), &type_arg)
+
+#define get_any_type_object(registry, type_arg) \
+    *any_type_cast(&type_arg, registry->view(type_name(type_arg)))
+
+#define get_library_type_object(library, type_arg) \
+    reinterpret_type_cast(&type_arg, library->get_func(macro_to_string(type_arg).c_str()))
+
+#define get_library_type_pair(library, type_arg) \
+    { type_name(type_arg), get_library_type_object(library, type_arg) }
 
 #endif

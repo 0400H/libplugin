@@ -1,6 +1,4 @@
-#include "libplugin/api.hpp"
-
-#include <string>
+#include "test_lib.hpp"
 
 #ifdef __cplusplus
 extern "C" {

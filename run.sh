@@ -35,4 +35,4 @@ cd build/test/cpp/library && BIND_CPU_MEM ./test_library -s 2>&1 | tee -a ${LOG_
 
 cd build/test/cpp/registry && BIND_CPU_MEM ./test_registry -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
 
-cd build/example/cpp/hello_world BIND_CPU_MEM ./hello_world 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log
+cd build/examples/cpp/hello_world && BIND_CPU_MEM ./hello_world 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -

@@ -18,7 +18,7 @@ public:
     library(const char*, int);
     ~library();
     status open(const char*, int);
-    void close();
+    status close();
     void* get_func(const char*);
     void* get_handle();
 private:

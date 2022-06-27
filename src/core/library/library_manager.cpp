@@ -24,11 +24,11 @@ status library::open(const char* file, int mode) {
     std::lock_guard<std::mutex> lock(this->mutex);
     auto ret = S_Success;
     if (file) {
-        spdlog::debug(fmt::format("library::open({}, {}).", file, mode));
+        spdlog::debug("library::open({}, {}).", file, mode);
         this->handle = dlopen(file, mode);
         auto error = dlerror();
         if (error != nullptr || this->handle == nullptr) {
-            spdlog::error(fmt::format("dlopen({}, {}) error: {}.", file, mode, error));
+            spdlog::error("dlopen({}, {}) error: {}.", file, mode, error);
             ret = S_Failed;
         }
     } else {
@@ -38,12 +38,13 @@ status library::open(const char* file, int mode) {
     return ret;
 }
 
-void library::close() {
+status library::close() {
     std::lock_guard<std::mutex> lock(this->mutex);
     if (this->handle) {
         dlclose(handle);
     }
     this->handle = nullptr;
+    return S_Success;
 }
 
 void* library::get_func(const char* name) {
@@ -52,7 +53,7 @@ void* library::get_func(const char* name) {
     auto error = dlerror();
     if (error != nullptr || this->handle == nullptr) {
         auto err_msg = fmt::format("dlsym({}, {}) error: {}.", this->handle, name, error);
-        throw std::runtime_error(err_msg);
+        spdlog::error(err_msg);
         return nullptr;
     } else {
         return func;

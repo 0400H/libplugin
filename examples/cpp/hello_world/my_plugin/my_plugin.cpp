@@ -1,3 +1,5 @@
+#include <spdlog/spdlog.h>
+
 #include "libplugin/registry.hpp"
 
 #include "my_plugin.hpp"
@@ -22,28 +24,26 @@ libplugin::status my_plugin::init() {
     this->hello_lib = std::make_shared<libplugin::library>("hello/libhello.so", RTLD_LAZY);
     this->world_lib = std::make_shared<libplugin::library>("world/libworld.so", RTLD_LAZY);
 
-    // get func table from lib
+    // get symbols from lib
     libplugin::symbols hello_symbol = {
-        { type_name(hello), this->hello_lib->get_func(macro_to_string(hello).c_str()) },
+        get_library_type_pair(this->hello_lib, hello),
+        get_library_type_pair(this->hello_lib, plugin),
     };
 
     libplugin::symbols world_symbol = {
-        { type_name(world), this->hello_lib->get_func(macro_to_string(world).c_str()) },
+        get_library_type_pair(this->world_lib, world),
+        get_library_type_pair(this->world_lib, plugin),
     };
 
-    // register funcs
-    // func list, override mode, strict mode
-    auto status = this->registry->register_args(hello_symbol, 0);
-    print_status(status);
+    // register symbols
+    // symbols, override mode
+    spdlog::trace("register_args(hello_symbol)");
+    auto status = this->registry->register_args(hello_symbol, 1);
+    libplugin::print_status(status);
 
-    status |= this->registry->register_args(world_symbol, 1);
-    print_status(status);
-
-    status = this->registry->unload_arg(type_name(hello));
-    print_status(status);
-
-    status |= this->registry->unload_arg(type_name(world));
-    print_status(status);
+    spdlog::trace("register_args(world_symbol)");
+    status |= this->registry->register_args(world_symbol, 0);
+    libplugin::print_status(status);
 
     // get func container from registry
     auto container = this->registry->view_all();
@@ -58,12 +58,12 @@ libplugin::status my_plugin::unload_all() {
     // if (this->factory) {
     //     status_code |= this->factory.unload_all();
     // };
-    // if (this->hello_lib) {
-    //     status_code |= this->hello_lib->unload_all();
-    // };
-    // if (this->world_lib) {
-    //     status_code |= this->world_lib->unload_all();
-    // };
+    if (this->hello_lib) {
+        status_code |= this->hello_lib->close();
+    };
+    if (this->world_lib) {
+        status_code |= this->world_lib->close();
+    };
     libplugin::parse_status(status_code);
     return status_code;
 };

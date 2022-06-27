@@ -14,7 +14,7 @@ public:
     virtual status init() = 0;
     virtual status release() = 0;
     virtual status export_lib(const char *);
-    virtual symbols view_all();
+    virtual std::shared_ptr<registry> view_all();
 protected:
     std::shared_ptr<registry> registry = nullptr;
 };

@@ -2,7 +2,6 @@
 
 #include "libplugin/plugin_base.hpp"
 
-// typedef std::unordered_map<std::string, std::any> container;
 
 namespace libplugin {
 
@@ -11,8 +10,8 @@ namespace libplugin {
         return ret;
     };
 
-    std::unordered_map<std::string, std::any> plugin_base::view_all() {
-        return this->registry->view_all();
+    std::shared_ptr<registry> plugin_base::view_all() {
+        return this->registry;
     };
 
 }
