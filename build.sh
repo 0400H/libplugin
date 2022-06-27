@@ -12,7 +12,7 @@ if [ ! -n "${INSTALL_PREFIX}" ]; then
     INSTALL_PREFIX=${BUILD_DIR}/install
 fi
 
-cmake -DCMAKE_CXX_STANDARD=11 \
+cmake -DCMAKE_CXX_STANDARD=17 \
       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
       -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
       ..

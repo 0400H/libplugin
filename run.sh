@@ -33,6 +33,8 @@ mkdir -p ${LOG_DIR}
 
 cd build/test/cpp/library && BIND_CPU_MEM ./test_library -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
 
+cd build/test/cpp/container && BIND_CPU_MEM ./test_container -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
+
 # BIND_CPU_MEM build/examples/cpp/hello_world/hello_world 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log
 
 # # https://github.com/google/benchmark/blob/main/docs/user_guide.md
