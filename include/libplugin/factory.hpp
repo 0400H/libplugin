@@ -12,10 +12,11 @@ typedef std::unordered_map<std::string, std::shared_ptr<library>>  library_map;
 
 class factory {
 public:
+    factory();
     factory(std::string, int);
     status open(std::string, int, int);
     void close(std::string);
-    void close();
+    void unload_all();
     bool has_lib(std::string);
     bool has_lib();
     bool has_default_lib();
@@ -36,5 +37,11 @@ protected:
 
 #define FACTORY_VIEW_SYMBOL(FACTORY, SYMBOL_NAME, LIB_NAME, POLICY) \
     REINTERPRET_CAST_SYMBOL(&SYMBOL_NAME, FACTORY->view(MACRO_TO_STRING(SYMBOL_NAME), LIB_NAME, POLICY))
+
+#define GEN_FACTORY_SYMBOL_PAIR(FACTORY, SYMBOL_NAME, LIB_NAME, POLICY) \
+    { GEN_ARG_TYPE_NAME(SYMBOL_NAME), FACTORY_VIEW_SYMBOL(FACTORY, SYMBOL_NAME, LIB_NAME, POLICY) }
+
+#define GEN_FACTORY_RAW_SYMBOL_PAIR(FACTORY, SYMBOL_NAME, LIB_NAME, POLICY) \
+    { GEN_RAW_TYPE_NAME(LIB_NAME, SYMBOL_NAME), FACTORY_VIEW_SYMBOL(FACTORY, SYMBOL_NAME, LIB_NAME, POLICY) }
 
 #endif

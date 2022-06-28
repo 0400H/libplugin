@@ -35,8 +35,11 @@ std::string cxx_demangle(const char*);
 
 #define MACRO_TO_STRING(x) std::string(MACRO_TO_CHARS(x))
 
-#define GEN_ARG_NAME(ARG) \
+#define GEN_ARG_TYPE_NAME(ARG) \
     MACRO_TO_STRING(ARG) + "@" + libplugin::cxx_demangle(typeid(ARG).name())
+
+#define GEN_RAW_TYPE_NAME(LIB, ARG) \
+     MACRO_TO_STRING(ARG) + "@" + LIB + "@" + libplugin::cxx_demangle(typeid(ARG).name())
 
 #define ANY_CAST_SYMBOL(SYMBOL_NAME, ANY_OBJ) \
     std::any_cast<decltype(SYMBOL_NAME)>(ANY_OBJ)
@@ -48,7 +51,7 @@ std::string cxx_demangle(const char*);
     REINTERPRET_CAST_SYMBOL(&SYMBOL_NAME, LIBRARY->view(MACRO_TO_CHARS(SYMBOL_NAME)))
 
 #define GEN_LIB_SYMBOL_PAIR(LIBRARY, SYMBOL_NAME) \
-    { GEN_ARG_NAME(SYMBOL_NAME), LIB_VIEW_SYMBOL(LIBRARY, SYMBOL_NAME) }
+    { GEN_ARG_TYPE_NAME(SYMBOL_NAME), LIB_VIEW_SYMBOL(LIBRARY, SYMBOL_NAME) }
 
 // #ifdef __cplusplus
 // }

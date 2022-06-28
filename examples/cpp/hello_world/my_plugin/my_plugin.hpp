@@ -16,6 +16,6 @@ public:
     void unload_all();
 private:
     std::shared_ptr<libplugin::factory> factory = nullptr;
-    std::shared_ptr<libplugin::library> hello_lib = nullptr;
-    std::shared_ptr<libplugin::library> world_lib = nullptr;
+    // std::shared_ptr<libplugin::library> hello_lib = nullptr;
+    // std::shared_ptr<libplugin::library> world_lib = nullptr;
 };

@@ -3,6 +3,8 @@
 
 namespace libplugin {
 
+factory::factory() {};
+
 factory::factory(std::string lib_path, int lib_mode) {
     this->open(lib_path, lib_mode, 0);
 };
@@ -44,7 +46,7 @@ void factory::close(std::string lib_path) {
     this->bucket.erase(lib_path);
 };
 
-void factory::close() {
+void factory::unload_all() {
     std::lock_guard<std::mutex> lock(this->mtx);
     this->bucket.clear();
 };

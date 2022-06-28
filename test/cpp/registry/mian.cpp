@@ -30,8 +30,8 @@ TEST_CASE("registry") {
 
     auto registry = std::make_shared<libplugin::registry>();
 
-    auto symbol_value = GEN_ARG_NAME(space::value);
-    auto symbol_object = GEN_ARG_NAME(space::create_object);
+    auto symbol_value = GEN_ARG_TYPE_NAME(space::value);
+    auto symbol_object = GEN_ARG_TYPE_NAME(space::create_object);
     spdlog::info("{} {}", symbol_value, symbol_object);
 
     registry->register_symbol(symbol_value, &space::value, 0);
