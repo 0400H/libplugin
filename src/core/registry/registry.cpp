@@ -32,21 +32,18 @@ status registry::register_symbols(symbol_map& args, int mode) {
     return S_Success;
 };
 
-status registry::unload_symbol(std::string type) {
+void registry::unload_symbol(std::string type) {
     this->container.erase(type);
-    return S_Success;
 };
 
-status registry::unload_symbols(std::vector<std::string> types) {
+void registry::unload_symbols(std::vector<std::string> types) {
     for (auto type : types) {
         this->unload_symbol(type);
     };
-    return S_Success;
 };
 
-status registry::unload_all() {
+void registry::unload_all() {
     this->container.clear();
-    return S_Success;
 };
 
 std::any registry::view(std::string type) {

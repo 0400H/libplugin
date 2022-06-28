@@ -12,9 +12,9 @@ int main() {
         spdlog::info("registered arg: {}.", pair.first);
     };
 
-    auto hello_func = get_any_type_object(registry, hello);
-    auto world_func = get_any_type_object(registry, world);
-    auto plugin_func = get_any_type_object(registry, plugin);
+    auto hello_func = REGISTRY_VIEW_SYMBOL(registry, hello);
+    auto world_func = REGISTRY_VIEW_SYMBOL(registry, world);
+    auto plugin_func = REGISTRY_VIEW_SYMBOL(registry, plugin);
 
     hello_func();
     world_func();

@@ -30,19 +30,19 @@ TEST_CASE("registry") {
 
     auto registry = std::make_shared<libplugin::registry>();
 
-    auto type_value = type_name(space::value);
-    auto type_object = type_name(space::create_object);
-    spdlog::info("{} {}", type_value, type_object);
+    auto symbol_value = GEN_ARG_NAME(space::value);
+    auto symbol_object = GEN_ARG_NAME(space::create_object);
+    spdlog::info("{} {}", symbol_value, symbol_object);
 
-    registry->register_symbol(type_value, &space::value, 0);
-    registry->register_symbol(type_object, &space::create_object, 1);
+    registry->register_symbol(symbol_value, &space::value, 0);
+    registry->register_symbol(symbol_object, &space::create_object, 1);
 
-    auto value = any_type_cast(&space::value, registry->view(type_value));
-    auto object = get_any_type_object(registry, space::create_object);
+    auto value = ANY_CAST_SYMBOL(&space::value, registry->view(symbol_value));
+    auto object = REGISTRY_VIEW_SYMBOL(registry, space::create_object);
 
     space::value = 1;
     *value = -1;
 
     CHECK( ((*value) == space::value) );
-    CHECK( ((*object)(type_object)->name == space::create_object(type_object)->name) );
+    CHECK( ((*object)(symbol_object)->name == space::create_object(symbol_object)->name) );
 }

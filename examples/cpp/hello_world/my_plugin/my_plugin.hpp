@@ -12,8 +12,8 @@ public:
     my_plugin();
     ~my_plugin();
     libplugin::status init() override;
-    libplugin::status release() override;
-    libplugin::status unload_all();
+    void release() override;
+    void unload_all();
 private:
     std::shared_ptr<libplugin::factory> factory = nullptr;
     std::shared_ptr<libplugin::library> hello_lib = nullptr;

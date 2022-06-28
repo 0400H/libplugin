@@ -33,6 +33,8 @@ mkdir -p ${LOG_DIR}
 
 cd build/test/cpp/library && BIND_CPU_MEM ./test_library -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
 
+cd build/test/cpp/factory && BIND_CPU_MEM ./test_factory -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
+
 cd build/test/cpp/registry && BIND_CPU_MEM ./test_registry -s 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -
 
 cd build/examples/cpp/hello_world && BIND_CPU_MEM ./hello_world 2>&1 | tee -a ${LOG_DIR}/${FILE_NAME}.log && cd -

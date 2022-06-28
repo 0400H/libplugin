@@ -9,7 +9,7 @@ namespace libplugin {
 class plugin_base {
 public:
     virtual status init() = 0;
-    virtual status release() = 0;
+    virtual void release() = 0;
     virtual status export_lib(const char *);
     virtual std::shared_ptr<registry> view_all();
 protected:

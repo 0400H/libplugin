@@ -16,9 +16,9 @@ class registry {
 public:
     status register_symbol(std::string, std::any, int);
     status register_symbols(symbol_map &, int);
-    status unload_symbol(std::string);
-    status unload_symbols(std::vector<std::string>);
-    status unload_all();
+    void unload_symbol(std::string);
+    void unload_symbols(std::vector<std::string>);
+    void unload_all();
     std::any view(std::string);
     symbol_map view_all();
 private:
@@ -27,28 +27,10 @@ private:
 
 }
 
-// #define macro_to_string(x) \
-//     std::string(#x)
+#define REGISTRY_REGISTER_ARG(REGISTRY, SYMBOL_NAME, OBJ) \
+    REGISTRY->register_symbol(GEN_ARG_NAME(SYMBOL_NAME), &OBJ)
 
-// #define type_name(type_arg) \
-//     macro_to_string(type_arg) + "@" + libplugin::cxx_demangle(typeid(type_arg).name())
-
-#define any_type_cast(type_arg, any_arg) \
-    std::any_cast<decltype(type_arg)>(any_arg)
-
-#define reinterpret_type_cast(type_arg, any_arg) \
-    reinterpret_cast<decltype(type_arg)>(any_arg)
-
-#define register_type_object(registry, type_arg) \
-    registry->register_symbol(type_name(type_arg), &type_arg)
-
-#define get_any_type_object(registry, type_arg) \
-    *any_type_cast(&type_arg, registry->view(type_name(type_arg)))
-
-#define get_library_type_object(library, type_arg) \
-    reinterpret_type_cast(&type_arg, library->get_symbol(macro_to_string(type_arg).c_str()))
-
-#define get_library_type_pair(library, type_arg) \
-    { type_name(type_arg), get_library_type_object(library, type_arg) }
+#define REGISTRY_VIEW_SYMBOL(REGISTRY, SYMBOL_NAME) \
+    *ANY_CAST_SYMBOL(&SYMBOL_NAME, REGISTRY->view(GEN_ARG_NAME(SYMBOL_NAME)))
 
 #endif

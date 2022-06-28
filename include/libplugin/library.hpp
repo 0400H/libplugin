@@ -19,26 +19,36 @@ public:
     library(const char*, int);
     ~library();
     status open(const char*, int);
-    status close();
-    void* get_symbol(const char*);
-    void* get_handle();
+    void close();
+    void* view(const char*);
+    void* handle();
 private:
-    void* handle;
-    std::mutex mutex;
+    void* ptr;
+    std::mutex mtx;
 };
 
 std::string cxx_demangle(const char*);
 
-// #define GetLibFunc(lib, return_type, name, ...) \
-//     reinterpret_cast<return_type (*)(__VA_ARGS__)>(lib.get_symbol(name))
-
 }
 
-#define macro_to_string(x) \
-    std::string(#x)
+#define MACRO_TO_CHARS(x) #x
 
-#define type_name(type_arg) \
-    macro_to_string(type_arg) + "@" + libplugin::cxx_demangle(typeid(type_arg).name())
+#define MACRO_TO_STRING(x) std::string(MACRO_TO_CHARS(x))
+
+#define GEN_ARG_NAME(ARG) \
+    MACRO_TO_STRING(ARG) + "@" + libplugin::cxx_demangle(typeid(ARG).name())
+
+#define ANY_CAST_SYMBOL(SYMBOL_NAME, ANY_OBJ) \
+    std::any_cast<decltype(SYMBOL_NAME)>(ANY_OBJ)
+
+#define REINTERPRET_CAST_SYMBOL(SYMBOL_NAME, OBJ) \
+    reinterpret_cast<decltype(SYMBOL_NAME)>(OBJ)
+
+#define LIB_VIEW_SYMBOL(LIBRARY, SYMBOL_NAME) \
+    REINTERPRET_CAST_SYMBOL(&SYMBOL_NAME, LIBRARY->view(MACRO_TO_CHARS(SYMBOL_NAME)))
+
+#define GEN_LIB_SYMBOL_PAIR(LIBRARY, SYMBOL_NAME) \
+    { GEN_ARG_NAME(SYMBOL_NAME), LIB_VIEW_SYMBOL(LIBRARY, SYMBOL_NAME) }
 
 // #ifdef __cplusplus
 // }

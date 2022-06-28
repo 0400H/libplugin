@@ -8,6 +8,6 @@ add_executable(test_registry ${SOURCES_AND_HEADERS})
 
 # add_dependencies(test_registry fmtlib_fmt)
 # add_dependencies(test_registry gabime_spdlog)
-# add_dependencies(test_registry doctest_doctest)
+add_dependencies(test_registry doctest_doctest)
 
 target_link_libraries(test_registry PRIVATE plugin)

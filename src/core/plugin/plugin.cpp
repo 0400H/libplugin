@@ -6,8 +6,7 @@
 namespace libplugin {
 
     status plugin_base::export_lib(const char * lib_path) {
-        status ret;
-        return ret;
+        return S_Success;
     };
 
     std::shared_ptr<registry> plugin_base::view_all() {

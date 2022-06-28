@@ -12,8 +12,8 @@ my_plugin::~my_plugin() {
     this->release();
 };
 
-libplugin::status my_plugin::release() {
-    return this->unload_all();
+void my_plugin::release() {
+    this->unload_all();
 };
 
 libplugin::status my_plugin::init() {
@@ -26,13 +26,13 @@ libplugin::status my_plugin::init() {
 
     // get symbol_map from lib
     libplugin::symbol_map hello_symbol = {
-        get_library_type_pair(this->hello_lib, hello),
-        get_library_type_pair(this->hello_lib, plugin),
+        GEN_LIB_SYMBOL_PAIR(this->hello_lib, hello),
+        GEN_LIB_SYMBOL_PAIR(this->hello_lib, plugin),
     };
 
     libplugin::symbol_map world_symbol = {
-        get_library_type_pair(this->world_lib, world),
-        get_library_type_pair(this->world_lib, plugin),
+        GEN_LIB_SYMBOL_PAIR(this->world_lib, world),
+        GEN_LIB_SYMBOL_PAIR(this->world_lib, plugin),
     };
 
     // register symbols
@@ -47,24 +47,22 @@ libplugin::status my_plugin::init() {
 
     // get func container from registry
     auto container = this->registry->view_all();
+    libplugin::parse_status(status);
     return status;
 };
 
-libplugin::status my_plugin::unload_all() {
-    auto status_code = libplugin::S_Success;
+void my_plugin::unload_all() {
     if (this->registry) {
-        status_code |= this->registry->unload_all();
+        this->registry->unload_all();
     };
     // if (this->factory) {
     //     status_code |= this->factory.unload_all();
     // };
     if (this->hello_lib) {
-        status_code |= this->hello_lib->close();
+        this->hello_lib->close();
     };
     if (this->world_lib) {
-        status_code |= this->world_lib->close();
+        this->world_lib->close();
     };
-    libplugin::parse_status(status_code);
-    return status_code;
 };
 

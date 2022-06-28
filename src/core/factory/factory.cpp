@@ -8,6 +8,7 @@ factory::factory(std::string lib_path, int lib_mode) {
 };
 
 status factory::open(std::string lib_path, int lib_mode, int policy) {
+    std::lock_guard<std::mutex> lock(this->mtx);
     spdlog::trace("factory::open({}, {}, {})", lib_path, lib_mode, policy);
     auto ret = S_Success;
 
@@ -20,6 +21,7 @@ status factory::open(std::string lib_path, int lib_mode, int policy) {
         if (policy == 0) {
             spdlog::trace("Factory policy: Load as default");
             this->bucket[lib_path] = lib_ptr;
+            this->default_lib = lib_path;
         } else if (policy == 1) {
             spdlog::trace("Factory policy: Load with override");
             this->bucket[lib_path] = lib_ptr;
@@ -37,75 +39,105 @@ status factory::open(std::string lib_path, int lib_mode, int policy) {
     return ret;
 };
 
-status factory::close(std::string lib_path) {
+void factory::close(std::string lib_path) {
+    std::lock_guard<std::mutex> lock(this->mtx);
     this->bucket.erase(lib_path);
-    return S_Success;
 };
 
-status factory::close() {
+void factory::close() {
+    std::lock_guard<std::mutex> lock(this->mtx);
     this->bucket.clear();
-    return S_Success;
 };
 
-status factory::has_lib(std::string lib_path) {
-    auto ret = S_Success;
+bool factory::has_lib(std::string lib_path) {
+    bool ret = true;
     if (this->bucket.count(lib_path) == 0) {
         spdlog::trace("Not find lib -> {}", lib_path);
-        ret = S_InvalidValue;
+        ret = false;
     }
     return ret;
 };
-status factory::has_lib() {
-    auto ret = S_Success;
+bool factory::has_lib() {
+    bool ret = true;
     if (this->bucket.empty()) {
-        ret = S_Failed;
+        ret = false;
     }
     return ret;
 };
 
-status factory::has_default_lib() {
+bool factory::has_default_lib() {
     return this->has_lib(this->default_lib);
 };
 
 status factory::as_default(std::string lib_path) {
-    auto ret = this->has_lib(lib_path);
-    if (!ret){
+    auto ret = S_Success;
+    if (this->has_lib(lib_path)){
         this->default_lib = lib_path;
-    }
+    } else {
+        ret = S_InvalidValue;
+    };
     return ret;
 };
 
-std::any factory::view(std::string lib_path, std::string symbol) {
-    if (this->has_lib(lib_path)) {
-        return std::any(nullptr);
+void* factory::view(std::string symbol, std::string lib_path, int policy) {
+    std::lock_guard<std::mutex> lock(this->mtx);
+    spdlog::trace("factory::view({}, {}, {})", symbol, lib_path, policy);
+    if (policy == 0) {
+        spdlog::trace("Find symbol policy: find symbol from target lib");
+        if (this->has_lib(lib_path)) {
+            return this->bucket.at(lib_path)->view(symbol.c_str());
+        } else {
+            return nullptr;
+        };
     } else {
-        auto arg = this->bucket.at(lib_path)->get_symbol(symbol.c_str());
-        return std::any(arg);
+        spdlog::trace("Find symbol policy: find symbol from any lib");
+        if (this->has_lib(this->default_lib)) {
+            auto arg = this->bucket[this->default_lib]->view(symbol.c_str());
+            if (arg) {
+                return arg;
+            } else {
+                for (auto & pair : this->bucket) {
+                    if (pair.first != lib_path) {
+                        auto arg = pair.second->view(symbol.c_str());
+                        if (arg) {
+                            return arg;
+                        };
+                    };
+                };
+                return nullptr;
+            };
+        } else {
+            return nullptr;
+        };
     };
 };
 
-std::any factory::view(std::string lib_path, std::string symbol, int mode) {
-    spdlog::trace("factory::view({}, {}, {})", lib_path, symbol, mode);
-    if (mode == 0) {
-        spdlog::trace("Find symbol mode: find symbol from target lib");
-        return this->view(lib_path, symbol);
+void* factory::view(std::string symbol, std::string lib_path) {
+    return this->view(lib_path, symbol, 0);
+};
+
+void* factory::view(std::string symbol) {
+    if (this->has_default_lib()) {
+        return this->view(this->default_lib, symbol);
     } else {
-        spdlog::trace("Find symbol mode: find symbol from any lib");
-        auto arg = this->bucket[this->default_lib]->get_symbol(symbol.c_str());
-        if (arg) {
-            return std::any(arg);
-        } else {
-            for (auto & pair : this->bucket) {
-                if (pair.first != lib_path) {
-                    auto arg = pair.second->get_symbol(symbol.c_str());
-                    if (arg) {
-                        return std::any(arg);
-                    };
-                };
-            };
-            std::any(nullptr);
-        };
+        return nullptr;
+    }
+};
+
+std::vector<void*> factory::view(std::vector<std::string> symbols, std::string lib_path, int policy) {
+    std::vector<void*> ret;
+    for (auto & symbol : symbols) {
+        ret.emplace_back(this->view(symbol, lib_path, policy));
     };
+    return ret;
+};
+
+std::vector<void*> factory::view(std::vector<std::string> symbols, std::string lib_path) {
+    return this->view(symbols, lib_path, 0);
+};
+
+std::vector<void*> factory::view(std::vector<std::string> symbols) {
+    return this->view(symbols, this->default_lib);
 };
 
 }

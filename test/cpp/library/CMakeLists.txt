@@ -14,6 +14,6 @@ add_executable(test_library ${SOURCES_AND_HEADERS})
 
 # add_dependencies(test_library fmtlib_fmt)
 # add_dependencies(test_library gabime_spdlog)
-# add_dependencies(test_library doctest_doctest)
+add_dependencies(test_library doctest_doctest)
 
 target_link_libraries(test_library PRIVATE plugin)

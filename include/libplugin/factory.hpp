@@ -1,7 +1,6 @@
 #ifndef LIBPLUGIN_FACTORY_H
 #define LIBPLUGIN_FACTORY_H
 
-#include <any>
 #include <memory>
 #include <unordered_map>
 
@@ -15,21 +14,27 @@ class factory {
 public:
     factory(std::string, int);
     status open(std::string, int, int);
-    status close(std::string);
-    status close();
-    status has_lib(std::string);
-    status has_lib();
-    status has_default_lib();
+    void close(std::string);
+    void close();
+    bool has_lib(std::string);
+    bool has_lib();
+    bool has_default_lib();
     status as_default(std::string);
-    std::any view(std::string, std::string, int);
-    std::any view(std::string, std::string);
-    std::vector<std::any> view(std::vector<std::string>, std::string, int);
-    std::vector<std::any> view(std::vector<std::string>, int);
+    void* view(std::string, std::string, int);
+    void* view(std::string, std::string);
+    void* view(std::string);
+    std::vector<void*> view(std::vector<std::string>, std::string, int);
+    std::vector<void*> view(std::vector<std::string>, std::string);
+    std::vector<void*> view(std::vector<std::string>);
 protected:
     std::string default_lib;
     library_map bucket;
+    std::mutex mtx;
 };
 
 }
+
+#define FACTORY_VIEW_SYMBOL(FACTORY, SYMBOL_NAME, LIB_NAME, POLICY) \
+    REINTERPRET_CAST_SYMBOL(&SYMBOL_NAME, FACTORY->view(MACRO_TO_STRING(SYMBOL_NAME), LIB_NAME, POLICY))
 
 #endif
