@@ -35,11 +35,10 @@ std::string cxx_demangle(const char*);
 
 #define MACRO_TO_STRING(x) std::string(MACRO_TO_CHARS(x))
 
-#define GEN_ARG_TYPE_NAME(ARG) \
-    MACRO_TO_STRING(ARG) + "@" + libplugin::cxx_demangle(typeid(ARG).name())
-
 #define GEN_RAW_TYPE_NAME(LIB, ARG) \
-     MACRO_TO_STRING(ARG) + "@" + LIB + "@" + libplugin::cxx_demangle(typeid(ARG).name())
+    std::string(LIB) + "@" + MACRO_TO_STRING(ARG) + "@" + libplugin::cxx_demangle(typeid(ARG).name())
+
+#define GEN_ARG_TYPE_NAME(ARG) GEN_RAW_TYPE_NAME("", ARG)
 
 #define ANY_CAST_SYMBOL(SYMBOL_NAME, ANY_OBJ) \
     std::any_cast<decltype(SYMBOL_NAME)>(ANY_OBJ)

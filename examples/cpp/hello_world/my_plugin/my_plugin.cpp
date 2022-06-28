@@ -33,8 +33,8 @@ libplugin::status my_plugin::init() {
     libplugin::symbol_map hello_world_symbol = {
         GEN_FACTORY_SYMBOL_PAIR(this->factory, hello, hello_path, 0),
         GEN_FACTORY_SYMBOL_PAIR(this->factory, world, hello_path, 1),
-        GEN_FACTORY_RAW_SYMBOL_PAIR(this->factory, plugin, hello_path, 1),
-        GEN_FACTORY_RAW_SYMBOL_PAIR(this->factory, plugin, world_path, 0),
+        GEN_FACTORY_RAW_SYMBOL_PAIR(this->factory, plugin, hello_path),
+        GEN_FACTORY_RAW_SYMBOL_PAIR(this->factory, plugin, world_path),
     };
 
     spdlog::trace("register_symbols(hello_world_symbol)");
@@ -60,7 +60,7 @@ libplugin::status my_plugin::init() {
     // status |= this->registry->register_symbols(world_symbol, 0);
     // libplugin::print_status(status);
 
-    // get func container from registry
+    // get symbol container from registry
     auto container = this->registry->view_all();
     libplugin::parse_status(status);
     return status;

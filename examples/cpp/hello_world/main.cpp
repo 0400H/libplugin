@@ -15,7 +15,7 @@ int main() {
     auto hello_func = REGISTRY_VIEW_SYMBOL(registry, hello);
     auto world_func = REGISTRY_VIEW_SYMBOL(registry, world);
     auto hello_plugin_func = REGISTRY_VIEW_RAW_SYMBOL(registry, plugin, "hello/libhello.so");
-    auto world_plugin_func = *ANY_CAST_SYMBOL(&plugin, registry->view("plugin@world/libworld.so@void ()"));
+    auto world_plugin_func = *ANY_CAST_SYMBOL(&plugin, registry->view("world/libworld.so@plugin@void ()"));
 
     hello_func();
     world_func();
