@@ -4,7 +4,7 @@
 namespace libplugin {
 
 std::vector<std::string> parse_status(status code) {
-    spdlog::debug("parse_status {0:b}", code);
+    spdlog::trace("parse_status {0:b}", code);
     std::vector<std::string> status_msg;
     if (code == S_Success) {
         status_msg.push_back("Success");

@@ -69,7 +69,7 @@ void set_logger_level(const char* env) {
     }
     spdlog::set_level(log_level);
     auto msg = fmt::format("env {} = {}\n", env, env_value?env_value:"");
-    spdlog::debug(msg);
+    spdlog::trace(msg);
 }
 
 }

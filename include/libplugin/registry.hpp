@@ -1,8 +1,10 @@
 #ifndef LIBPLUGIN_REGISTRY_H
 #define LIBPLUGIN_REGISTRY_H
 
-#include "status.hpp"
-#include "factory.hpp"
+#include <unordered_map>
+#include <memory>
+
+#include "library.hpp"
 
 namespace libplugin {
 // https://blog.csdn.net/only_1/article/details/80285212
@@ -23,15 +25,13 @@ private:
     symbol_map container;
 };
 
-std::string cxx_demangle(const char*);
-
 }
 
-#define macro_to_string(x) \
-    std::string(#x)
+// #define macro_to_string(x) \
+//     std::string(#x)
 
-#define type_name(type_arg) \
-    macro_to_string(type_arg) + "@" + libplugin::cxx_demangle(typeid(type_arg).name())
+// #define type_name(type_arg) \
+//     macro_to_string(type_arg) + "@" + libplugin::cxx_demangle(typeid(type_arg).name())
 
 #define any_type_cast(type_arg, any_arg) \
     std::any_cast<decltype(type_arg)>(any_arg)

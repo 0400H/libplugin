@@ -5,6 +5,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <cxxabi.h>
 
 namespace libplugin {
 
@@ -24,7 +25,7 @@ status library::open(const char* file, int mode) {
     std::lock_guard<std::mutex> lock(this->mutex);
     auto ret = S_Success;
     if (file) {
-        spdlog::debug("library::open({}, {}).", file, mode);
+        spdlog::trace("library::open({}, {}).", file, mode);
         this->handle = dlopen(file, mode);
         auto error = dlerror();
         if (error != nullptr || this->handle == nullptr) {
@@ -49,11 +50,11 @@ status library::close() {
 
 void* library::get_symbol(const char* name) {
     std::lock_guard<std::mutex> lock(this->mutex);
+    spdlog::trace("library::get_symbol({})", name);
     auto func = dlsym(this->handle, name);
     auto error = dlerror();
     if (error != nullptr || this->handle == nullptr) {
-        auto err_msg = fmt::format("dlsym({}, {}) error: {}.", this->handle, name, error);
-        spdlog::error(err_msg);
+        spdlog::trace("Not find symbol {}, error: {}", name, error);
         return nullptr;
     } else {
         return func;
@@ -63,6 +64,24 @@ void* library::get_symbol(const char* name) {
 void* library::get_handle() {
     std::lock_guard<std::mutex> lock(this->mutex);
     return this->handle;
+}
+
+std::string cxx_demangle(const char* name) {
+    char buffer[1024] = {0};
+    size_t size = sizeof(buffer);
+    int status;
+    char *ret;
+    try {
+        ret = abi::__cxa_demangle(name, buffer, &size, &status);
+        if(ret) {
+            return std::string(ret);
+        } else {
+            return name;
+        }
+    } catch(...) {
+        return name;
+    }
+    return name;
 }
 
 }

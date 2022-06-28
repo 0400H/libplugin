@@ -3,7 +3,7 @@
 #include "test_lib/test_lib.hpp"
 
 TEST_CASE("library") {
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::trace);
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
 
     auto lib = std::make_shared<libplugin::library>("test_lib/libtest_lib.so", RTLD_LAZY);

@@ -25,7 +25,7 @@ std::shared_ptr<object> create_object(std::string value) {
 };
 
 TEST_CASE("registry") {
-    spdlog::set_level(spdlog::level::debug);
+    spdlog::set_level(spdlog::level::trace);
     spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
 
     auto registry = std::make_shared<libplugin::registry>();

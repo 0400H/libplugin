@@ -3,6 +3,7 @@
 
 #include <mutex>
 #include <dlfcn.h>
+#include <any>
 
 #include "status.hpp"
 
@@ -26,10 +27,18 @@ private:
     std::mutex mutex;
 };
 
+std::string cxx_demangle(const char*);
+
 // #define GetLibFunc(lib, return_type, name, ...) \
 //     reinterpret_cast<return_type (*)(__VA_ARGS__)>(lib.get_symbol(name))
 
 }
+
+#define macro_to_string(x) \
+    std::string(#x)
+
+#define type_name(type_arg) \
+    macro_to_string(type_arg) + "@" + libplugin::cxx_demangle(typeid(type_arg).name())
 
 // #ifdef __cplusplus
 // }

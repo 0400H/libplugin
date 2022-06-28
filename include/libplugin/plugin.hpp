@@ -2,6 +2,7 @@
 #define LIBPLUGIN_PLUGIN_H
 
 #include "registry.hpp"
+#include "factory.hpp"
 
 namespace libplugin {
 
