@@ -38,7 +38,7 @@ TEST_CASE("registry") {
     registry->register_arg(type_object, &space::create_object, 1);
 
     auto value = any_type_cast(&space::value, registry->view(type_value));
-    auto object = any_type_cast(&space::create_object, registry->view(type_object));
+    auto object = get_any_type_object(registry, space::create_object);
 
     space::value = 1;
     *value = -1;

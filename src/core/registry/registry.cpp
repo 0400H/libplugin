@@ -5,17 +5,18 @@
 namespace libplugin {
 
 status registry::register_arg(std::string type, std::any arg, int mode) {
+    spdlog::debug("Register arg -> {}.", type);
     auto ret = S_Success;
     if (mode == 0) {
-        spdlog::debug("Allowed to override -> {}", type);
+        spdlog::debug("Override policy: Allowed to override.");
         this->container[type] = arg;
     } else if (mode == 1) {
-        spdlog::debug("Not allowed to override -> {}", type);
+        spdlog::debug("Override policy: Not allowed to override.");
         if (this->container.count(type) == 0) {
             this->container[type] = arg;
         }
     } else {
-        spdlog::debug("Not allowed to override and return error -> {} ", type);
+        spdlog::debug("Override policy: Not allowed to override, if find then return error.");
         if (this->container.count(type) == 0) {
             this->container[type] = arg;
         } else {
