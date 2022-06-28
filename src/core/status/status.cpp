@@ -1,7 +1,5 @@
-#include <spdlog/spdlog.h>
-
 #include "libplugin/status.hpp"
-#include "libplugin/logger.hpp"
+#include "core/utils.hpp"
 
 namespace libplugin {
 

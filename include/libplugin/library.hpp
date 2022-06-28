@@ -19,7 +19,7 @@ public:
     ~library();
     status open(const char*, int);
     status close();
-    void* get_func(const char*);
+    void* get_symbol(const char*);
     void* get_handle();
 private:
     void* handle;
@@ -27,7 +27,7 @@ private:
 };
 
 // #define GetLibFunc(lib, return_type, name, ...) \
-//     reinterpret_cast<return_type (*)(__VA_ARGS__)>(lib.get_func(name))
+//     reinterpret_cast<return_type (*)(__VA_ARGS__)>(lib.get_symbol(name))
 
 }
 

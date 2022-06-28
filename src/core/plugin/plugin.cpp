@@ -1,6 +1,6 @@
 #include <string>
 
-#include "libplugin/plugin_base.hpp"
+#include "libplugin/plugin.hpp"
 
 
 namespace libplugin {

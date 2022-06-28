@@ -24,25 +24,25 @@ libplugin::status my_plugin::init() {
     this->hello_lib = std::make_shared<libplugin::library>("hello/libhello.so", RTLD_LAZY);
     this->world_lib = std::make_shared<libplugin::library>("world/libworld.so", RTLD_LAZY);
 
-    // get symbols from lib
-    libplugin::symbols hello_symbol = {
+    // get symbol_map from lib
+    libplugin::symbol_map hello_symbol = {
         get_library_type_pair(this->hello_lib, hello),
         get_library_type_pair(this->hello_lib, plugin),
     };
 
-    libplugin::symbols world_symbol = {
+    libplugin::symbol_map world_symbol = {
         get_library_type_pair(this->world_lib, world),
         get_library_type_pair(this->world_lib, plugin),
     };
 
     // register symbols
     // symbols, override mode
-    spdlog::trace("register_args(hello_symbol)");
-    auto status = this->registry->register_args(hello_symbol, 1);
+    spdlog::trace("register_symbols(hello_symbol)");
+    auto status = this->registry->register_symbols(hello_symbol, 1);
     libplugin::print_status(status);
 
-    spdlog::trace("register_args(world_symbol)");
-    status |= this->registry->register_args(world_symbol, 0);
+    spdlog::trace("register_symbols(world_symbol)");
+    status |= this->registry->register_symbols(world_symbol, 0);
     libplugin::print_status(status);
 
     // get func container from registry

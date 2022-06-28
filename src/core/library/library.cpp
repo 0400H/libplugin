@@ -1,6 +1,6 @@
 #include "libplugin/library.hpp"
 
-#include "library_sal.hpp"
+#include "dl_sal.hpp"
 #include "core/utils.hpp"
 
 #include <string>
@@ -47,7 +47,7 @@ status library::close() {
     return S_Success;
 }
 
-void* library::get_func(const char* name) {
+void* library::get_symbol(const char* name) {
     std::lock_guard<std::mutex> lock(this->mutex);
     auto func = dlsym(this->handle, name);
     auto error = dlerror();

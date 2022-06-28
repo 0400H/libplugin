@@ -1,16 +1,16 @@
 #include "libplugin/registry.hpp"
+#include "core/utils.hpp"
 #include <cxxabi.h>
-#include <spdlog/spdlog.h>
 
 namespace libplugin {
 
-status registry::register_arg(std::string type, std::any arg, int mode) {
-    spdlog::debug("Register arg -> {}.", type);
+status registry::register_symbol(std::string type, std::any arg, int override_mode) {
+    spdlog::debug("Register symbol -> {}.", type);
     auto ret = S_Success;
-    if (mode == 0) {
+    if (override_mode == 0) {
         spdlog::debug("Override policy: Allowed to override.");
         this->container[type] = arg;
-    } else if (mode == 1) {
+    } else if (override_mode == 1) {
         spdlog::debug("Override policy: Not allowed to override.");
         if (this->container.count(type) == 0) {
             this->container[type] = arg;
@@ -26,28 +26,28 @@ status registry::register_arg(std::string type, std::any arg, int mode) {
     return ret;
 };
 
-status registry::register_args(symbols& args, int mode) {
+status registry::register_symbols(symbol_map& args, int mode) {
     for (auto& arg : args) {
-        this->register_arg(arg.first, arg.second, mode);
+        this->register_symbol(arg.first, arg.second, mode);
     };
     return S_Success;
 };
 
-status registry::unload_arg(std::string type) {
+status registry::unload_symbol(std::string type) {
     this->container.erase(type);
     return S_Success;
 };
 
-status registry::unload_args(std::vector<std::string> types) {
+status registry::unload_symbols(std::vector<std::string> types) {
     for (auto type : types) {
-        this->unload_arg(type);
+        this->unload_symbol(type);
     };
     return S_Success;
 };
 
 status registry::unload_all() {
     for (auto pair : this->container) {
-        this->unload_arg(pair.first);
+        this->unload_symbol(pair.first);
     };
     return S_Success;
 };
@@ -56,7 +56,7 @@ std::any registry::view(std::string type) {
     return this->container.at(type);
 };
 
-symbols registry::view_all() {
+symbol_map registry::view_all() {
     return this->container;
 };
 

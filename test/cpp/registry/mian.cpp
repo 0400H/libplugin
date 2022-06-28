@@ -34,8 +34,8 @@ TEST_CASE("registry") {
     auto type_object = type_name(space::create_object);
     spdlog::info("{} {}", type_value, type_object);
 
-    registry->register_arg(type_value, &space::value, 0);
-    registry->register_arg(type_object, &space::create_object, 1);
+    registry->register_symbol(type_value, &space::value, 0);
+    registry->register_symbol(type_object, &space::create_object, 1);
 
     auto value = any_type_cast(&space::value, registry->view(type_value));
     auto object = get_any_type_object(registry, space::create_object);
