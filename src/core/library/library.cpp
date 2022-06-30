@@ -23,9 +23,10 @@ library::~library() {
 
 status library::open(const char* file, int mode) {
     std::lock_guard<std::mutex> lock(this->mtx);
+    spdlog::trace("library::open({}, {}).", file, mode);
     auto ret = S_Success;
     if (file) {
-        spdlog::trace("library::open({}, {}).", file, mode);
+        this->name = std::string(file);
         this->ptr = dlopen(file, mode);
         auto error = dlerror();
         if (error != nullptr || this->ptr == nullptr) {
@@ -35,12 +36,13 @@ status library::open(const char* file, int mode) {
     } else {
         spdlog::error("wrong null file pointer!");
         ret = S_InvalidValue;
-    };
+    }
     return ret;
 }
 
 void library::close() {
     std::lock_guard<std::mutex> lock(this->mtx);
+    spdlog::trace("library::close() -> {}.", this->name);
     if (this->ptr) {
         dlclose(this->ptr);
     }
@@ -73,7 +75,7 @@ std::string cxx_demangle(const char* name) {
     try {
         ret = abi::__cxa_demangle(name, buffer, &size, &status);
         if(ret) {
-            return std::string(ret);
+            return ret;
         } else {
             return name;
         }

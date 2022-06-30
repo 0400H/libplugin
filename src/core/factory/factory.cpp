@@ -43,6 +43,7 @@ status factory::open(std::string lib_path, int lib_mode, int policy) {
 
 void factory::close(std::string lib_path) {
     std::lock_guard<std::mutex> lock(this->mtx);
+    spdlog::trace("factory::close({}).", lib_path);
     this->bucket.erase(lib_path);
 };
 
@@ -85,14 +86,14 @@ void* factory::view(std::string symbol, std::string lib_path, int policy) {
     std::lock_guard<std::mutex> lock(this->mtx);
     spdlog::trace("factory::view({}, {}, {})", symbol, lib_path, policy);
     if (policy == 0) {
-        spdlog::trace("Find symbol policy: find symbol from target lib");
+        spdlog::trace("Find symbol policy: find from target lib");
         if (this->has_lib(lib_path)) {
             return this->bucket.at(lib_path)->view(symbol.c_str());
         } else {
             return nullptr;
         };
     } else {
-        spdlog::trace("Find symbol policy: find symbol from any lib");
+        spdlog::trace("Find symbol policy: find from any lib");
         if (this->has_lib(this->default_lib)) {
             auto arg = this->bucket[this->default_lib]->view(symbol.c_str());
             if (arg) {

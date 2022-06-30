@@ -9,17 +9,23 @@ int main() {
     auto registry = plugin_impl->view_all();
 
     for (auto& pair : registry->view_all()) {
-        spdlog::info("registered symbol: {}.", pair.first);
+        spdlog::info("registered symbol -> {}.", pair.first);
     };
 
     auto hello_func = REGISTRY_VIEW_SYMBOL(registry, hello);
     auto world_func = REGISTRY_VIEW_SYMBOL(registry, world);
     auto hello_plugin_func = REGISTRY_VIEW_RAW_SYMBOL(registry, plugin, "hello/libhello.so");
-    auto world_plugin_func = *ANY_CAST_SYMBOL(&plugin, registry->view("world/libworld.so@plugin@void ()"));
+    auto world_plugin_func = *ANY_CAST(&plugin, registry->view("world/libworld.so@plugin@void ()"));
 
     hello_func();
     world_func();
     hello_plugin_func();
     world_plugin_func();
+
+    registry->unload_symbol(SYMBOL_TYPE(hello));
+    registry->unload_symbol("world/libworld.so@plugin@void ()");
+    for (auto& pair : registry->view_all()) {
+        spdlog::info("registered symbol -> {}.", pair.first);
+    };
     return 0;
 }

@@ -21,19 +21,19 @@ public:
     void unload_all();
     std::any view(std::string);
     symbol_map view_all();
-private:
+protected:
     symbol_map container;
 };
 
 }
 
 #define REGISTRY_REGISTER_ARG(REGISTRY, SYMBOL_NAME, OBJ) \
-    REGISTRY->register_symbol(GEN_ARG_TYPE_NAME(SYMBOL_NAME), &OBJ)
+    REGISTRY->register_symbol(SYMBOL_TYPE(SYMBOL_NAME), &OBJ)
 
 #define REGISTRY_VIEW_SYMBOL(REGISTRY, SYMBOL_NAME) \
-    *ANY_CAST_SYMBOL(&SYMBOL_NAME, REGISTRY->view(GEN_ARG_TYPE_NAME(SYMBOL_NAME)))
+    *ANY_CAST(&SYMBOL_NAME, REGISTRY->view(SYMBOL_TYPE(SYMBOL_NAME)))
 
 #define REGISTRY_VIEW_RAW_SYMBOL(REGISTRY, SYMBOL_NAME, LIB_NAME) \
-    *ANY_CAST_SYMBOL(&SYMBOL_NAME, REGISTRY->view(GEN_RAW_TYPE_NAME(LIB_NAME, SYMBOL_NAME)))
+    *ANY_CAST(&SYMBOL_NAME, REGISTRY->view(IDENTITY(LIB_NAME, SYMBOL_NAME)))
 
 #endif

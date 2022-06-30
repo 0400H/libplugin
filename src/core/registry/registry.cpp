@@ -3,13 +3,13 @@
 
 namespace libplugin {
 
-status registry::register_symbol(std::string type, std::any arg, int override_mode) {
-    spdlog::trace("Register symbol -> {}.", type);
+status registry::register_symbol(std::string type, std::any arg, int policy) {
+    spdlog::trace("registry::register_symbol({}, arg, {}).", type, policy);
     auto ret = S_Success;
-    if (override_mode == 0) {
+    if (policy == 0) {
         spdlog::trace("Override policy: Allowed to override.");
         this->container[type] = arg;
-    } else if (override_mode == 1) {
+    } else if (policy == 1) {
         spdlog::trace("Override policy: Not allowed to override.");
         if (this->container.count(type) == 0) {
             this->container[type] = arg;
@@ -33,6 +33,7 @@ status registry::register_symbols(symbol_map& args, int mode) {
 };
 
 void registry::unload_symbol(std::string type) {
+    spdlog::trace("registry::unload_symbol({}).", type);
     this->container.erase(type);
 };
 
