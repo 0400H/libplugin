@@ -19,4 +19,4 @@ add_subdirectory(my_plugin)
 
 add_executable(hello_world ${EXAMPLES_SOURCES_AND_HEADERS})
 
-target_link_libraries(hello_world PRIVATE plugin)
+target_link_libraries(hello_world PRIVATE ${PROJECT_LIBRARY_NAME})

@@ -8,16 +8,22 @@ add_subdirectory(core)
 add_subdirectory(cpp)
 
 message("src source files: ${SRC_SOURCES_AND_HEADERS}")
-# add_library(plugin SHARED STATIC ${SRC_SOURCES_AND_HEADERS})
-add_library(plugin STATIC ${SRC_SOURCES_AND_HEADERS})
 
-add_dependencies(plugin fmtlib_fmt)
-add_dependencies(plugin gabime_spdlog)
-add_dependencies(plugin davegamble_cjson)
+add_library(${PROJECT_LIBRARY_NAME} STATIC ${SRC_SOURCES_AND_HEADERS})
+add_dependencies(${PROJECT_LIBRARY_NAME} fmtlib_fmt)
+add_dependencies(${PROJECT_LIBRARY_NAME} gabime_spdlog)
+add_dependencies(${PROJECT_LIBRARY_NAME} davegamble_cjson)
+target_link_libraries(${PROJECT_LIBRARY_NAME} PRIVATE dl)
 
-target_link_libraries(plugin PRIVATE dl)
+set(PROJECT_SHARED_LIBRARY_NAME ${PROJECT_LIBRARY_NAME}_shared)
+add_library(${PROJECT_SHARED_LIBRARY_NAME} SHARED ${SRC_SOURCES_AND_HEADERS})
+set_target_properties(${PROJECT_SHARED_LIBRARY_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_LIBRARY_NAME})
+add_dependencies(${PROJECT_SHARED_LIBRARY_NAME} fmtlib_fmt)
+add_dependencies(${PROJECT_SHARED_LIBRARY_NAME} gabime_spdlog)
+add_dependencies(${PROJECT_SHARED_LIBRARY_NAME} davegamble_cjson)
+target_link_libraries(${PROJECT_SHARED_LIBRARY_NAME} PRIVATE dl)
 
-install(TARGETS plugin
+install(TARGETS ${PROJECT_LIBRARY_NAME} ${PROJECT_SHARED_LIBRARY_NAME}
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
         RUNTIME DESTINATION bin

@@ -20,4 +20,4 @@ add_executable(test_factory ${TEST_SOURCES_AND_HEADERS})
 
 add_dependencies(test_factory doctest_doctest)
 
-target_link_libraries(test_factory PRIVATE plugin)
+target_link_libraries(test_factory PRIVATE ${PROJECT_LIBRARY_NAME})
