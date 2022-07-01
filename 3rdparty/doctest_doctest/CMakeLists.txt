@@ -1,48 +1,37 @@
 cmake_minimum_required(VERSION 3.17)
 
-set(DOCTEST_ROOT ${CMAKE_BINARY_DIR}/3rdparty/doctest_doctest)
-set(DOCTEST_SOURCE ${DOCTEST_ROOT}/src/doctest_doctest)
-set(DOCTEST_INSTALL ${DOCTEST_ROOT}/install)
-set(DOCTEST_INCLUDE ${DOCTEST_INSTALL}/include)
-set(DOCTEST_LIBRARY ${DOCTEST_INSTALL}/lib)
+set(PACKAGE_NAME doctest_doctest)
+set(ROOT_PATH ${CMAKE_BINARY_DIR}/3rdparty/${ROOT_NAME})
+set(SOURCE_PATH ${ROOT_PATH}/src/${ROOT_NAME})
+set(INSTALL_PATH ${ROOT_PATH}/install)
+set(INCLUDE_PATH ${INSTALL_PATH}/include)
+set(LIBRARTY_PATH ${INSTALL_PATH}/lib)
 set(CMAKE_ARGS -DCMAKE_VERBOSE_MAKEFILE=ON
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-               -DCMAKE_INSTALL_PREFIX=${DOCTEST_INSTALL}
+               -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH}
+               -DDOCTEST_WITH_MAIN_IN_STATIC_LIB=ON
                -DDOCTEST_WITH_TESTS=OFF
                -DDOCTEST_NO_INSTALL=OFF .)
 
+if(EXISTS ${INSTALL_PATH})
+    set(UPDATE_DISCONNECTED 1)
+else()
+    set(UPDATE_DISCONNECTED 0)
+endif()
+
 include(ExternalProject)
-ExternalProject_Add(doctest_doctest
-    PREFIX            ${DOCTEST_ROOT}
-    GIT_REPOSITORY    https://github.com/doctest/doctest.git
-    GIT_TAG           v2.4.8
-    BUILD_ALWAYS      OFF
-    LOG_DOWNLOAD      OFF
-    LOG_BUILD         OFF
-    LOG_INSTALL       OFF
-    # UPDATE_COMMAND    "" # setup patch
-    CMAKE_ARGS        ${CMAKE_ARGS}
-    # CONFIGURE_COMMAND cd ${DOCTEST_SOURCE} && cmake ${CMAKE_ARGS}
-    # BUILD_COMMAND     cd ${DOCTEST_SOURCE} && $(MAKE) -j ${PARALLEL_JOBS}
-    # INSTALL_COMMAND   cd ${DOCTEST_SOURCE} && $(MAKE) install
-    # TEST_COMMAND      ""
-    # SOURCE_DIR        ""
-    # BINARY_DIR        ""
+ExternalProject_Add(${PACKAGE_NAME}
+    PREFIX                 ${ROOT_PATH}
+    GIT_REPOSITORY         https://github.com/doctest/doctest.git
+    GIT_TAG                v2.4.8
+    BUILD_ALWAYS           OFF
+    LOG_DOWNLOAD           OFF
+    LOG_BUILD              OFF
+    LOG_INSTALL            OFF
+    UPDATE_DISCONNECTED    ${UPDATE_DISCONNECTED}
+    CMAKE_ARGS             ${CMAKE_ARGS}
 )
+ExternalProject_Get_Property(${PACKAGE_NAME})
 
-ExternalProject_Get_Property(doctest_doctest)
-include_directories(${DOCTEST_INCLUDE})
-link_directories(${DOCTEST_LIBRARY})
-
-# include(FetchContent)
-# FetchContent_Declare(doctest
-#     GIT_REPOSITORY https://github.com/doctest/doctest.git
-#     GIT_TAG v2.4.8)
-
-# 建议使用压缩包的方式依赖，下载速度更快
-# FetchContent_Declare(doctest
-#    URL https://github.com/doctest/doctest/archive/refs/tags/v2.4.8.tar.gz)
-
-# FetchContent_MakeAvailable(doctest)
-
-# target_link_libraries(doctest PRIVATE doctest::doctest)
+include_directories(${INCLUDE_PATH})
+link_directories(${LIBRARTY_PATH})

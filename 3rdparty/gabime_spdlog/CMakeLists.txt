@@ -1,48 +1,36 @@
 cmake_minimum_required(VERSION 3.17)
 
-set(SPDLOG_ROOT ${CMAKE_BINARY_DIR}/3rdparty/gabime_spdlog)
-set(SPDLOG_SOURCE ${SPDLOG_ROOT}/src/gabime_spdlog)
-set(SPDLOG_INSTALL_PREFIX ${SPDLOG_ROOT}/install)
-set(SPDLOG_INCLUDE ${SPDLOG_INSTALL_PREFIX}/include)
-set(SPDLOG_LIBRARY ${SPDLOG_INSTALL_PREFIX}/lib)
+set(PACKAGE_NAME gabime_spdlog)
+set(ROOT_PATH ${CMAKE_BINARY_DIR}/3rdparty/${ROOT_NAME})
+set(SOURCE_PATH ${ROOT_PATH}/src/${ROOT_NAME})
+set(INSTALL_PATH ${ROOT_PATH}/install)
+set(INCLUDE_PATH ${INSTALL_PATH}/include)
+set(LIBRARTY_PATH ${INSTALL_PATH}/lib)
 set(CMAKE_ARGS -DCMAKE_VERBOSE_MAKEFILE=ON
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-               -DCMAKE_INSTALL_PREFIX=${SPDLOG_INSTALL_PREFIX}
+               -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH}
                -DSPDLOG_BUILD_EXAMPLE=OFF
                -DSPDLOG_INSTALL=ON .)
 
+if(EXISTS ${INSTALL_PATH})
+    set(UPDATE_DISCONNECTED 1)
+else()
+    set(UPDATE_DISCONNECTED 0)
+endif()
+
 include(ExternalProject)
-ExternalProject_Add(gabime_spdlog
-    PREFIX            ${SPDLOG_ROOT}
-    GIT_REPOSITORY    https://github.com/gabime/spdlog.git
-    GIT_TAG           v1.10.0
-    BUILD_ALWAYS      OFF
-    LOG_DOWNLOAD      OFF
-    LOG_BUILD         OFF
-    LOG_INSTALL       OFF
-    # UPDATE_COMMAND    "" # setup patch
-    CMAKE_ARGS        ${CMAKE_ARGS}
-    # CONFIGURE_COMMAND cd ${SPDLOG_SOURCE} && cmake ${CMAKE_ARGS}
-    # BUILD_COMMAND     cd ${SPDLOG_SOURCE} && $(MAKE) -j ${PARALLEL_JOBS}
-    # INSTALL_COMMAND   cd ${SPDLOG_SOURCE} && $(MAKE) install
-    # TEST_COMMAND      ""
-    # SOURCE_DIR        ""
-    # BINARY_DIR        ""
+ExternalProject_Add(${PACKAGE_NAME}
+    PREFIX                 ${ROOT_PATH}
+    GIT_REPOSITORY         https://github.com/gabime/spdlog.git
+    GIT_TAG                v1.10.0
+    BUILD_ALWAYS           OFF
+    LOG_DOWNLOAD           OFF
+    LOG_BUILD              OFF
+    LOG_INSTALL            OFF
+    UPDATE_DISCONNECTED    ${UPDATE_DISCONNECTED}
+    CMAKE_ARGS             ${CMAKE_ARGS}
 )
+ExternalProject_Get_Property(${PACKAGE_NAME})
 
-ExternalProject_Get_Property(gabime_spdlog)
-include_directories(${SPDLOG_INCLUDE})
-link_directories(${SPDLOG_LIBRARY})
-
-# include(FetchContent)
-# FetchContent_Declare(spdlog
-#     GIT_REPOSITORY https://github.com/gabime/spdlog.git
-#     GIT_TAG v1.10.0)
-
-# 建议使用压缩包的方式依赖，下载速度更快
-# FetchContent_Declare(spdlog
-#    URL https://github.com/gabime/spdlog/archive/refs/tags/v1.10.0.tar.gz)
-
-# FetchContent_MakeAvailable(spdlog)
-
-# target_link_libraries(spdlog PRIVATE spdlog::spdlog)
+include_directories(${INCLUDE_PATH})
+link_directories(${LIBRARTY_PATH})

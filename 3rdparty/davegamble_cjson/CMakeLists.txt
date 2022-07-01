@@ -1,36 +1,37 @@
 cmake_minimum_required(VERSION 3.17)
 
-set(CJSON_ROOT ${CMAKE_BINARY_DIR}/3rdparty/davegamble_cjson)
-set(CJSON_SOURCE ${CJSON_ROOT}/src/davegamble_cjson)
-set(CJSON_INSTALL ${CJSON_ROOT}/install)
-set(CJSON_INCLUDE ${CJSON_INSTALL}/include)
-set(CJSON_LIBRARY ${CJSON_INSTALL}/lib)
+set(PACKAGE_NAME davegamble_cjson)
+set(ROOT_PATH ${CMAKE_BINARY_DIR}/3rdparty/${ROOT_NAME})
+set(SOURCE_PATH ${ROOT_PATH}/src/${ROOT_NAME})
+set(INSTALL_PATH ${ROOT_PATH}/install)
+set(INCLUDE_PATH ${INSTALL_PATH}/include)
+set(LIBRARTY_PATH ${INSTALL_PATH}/lib)
 set(CMAKE_ARGS -DCMAKE_VERBOSE_MAKEFILE=ON
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-               -DCMAKE_INSTALL_PREFIX=${CJSON_INSTALL}
+               -DCMAKE_INSTALL_PREFIX=${INSTALL_PATH}
                -DBUILD_SHARED_AND_STATIC_LIBS=ON
                -DBUILD_SHARED_LIBS=OFF
                -DENABLE_CJSON_TEST=OFF .)
 
-include(ExternalProject)
-ExternalProject_Add(davegamble_cjson
-    PREFIX            ${CJSON_ROOT}
-    GIT_REPOSITORY    https://github.com/DaveGamble/cJSON.git
-    GIT_TAG           v1.7.15
-    BUILD_ALWAYS      OFF
-    LOG_DOWNLOAD      OFF
-    LOG_BUILD         OFF
-    LOG_INSTALL       OFF
-    # UPDATE_COMMAND    "" # setup patch
-    CMAKE_ARGS        ${CMAKE_ARGS}
-    # CONFIGURE_COMMAND cd ${CJSON_SOURCE} && cmake ${CMAKE_ARGS}
-    # BUILD_COMMAND     cd ${CJSON_SOURCE} && $(MAKE) -j ${PARALLEL_JOBS}
-    # INSTALL_COMMAND   cd ${CJSON_SOURCE} && $(MAKE) install
-    # TEST_COMMAND      ""
-    # SOURCE_DIR        ""
-    # BINARY_DIR        ""
-)
+if(EXISTS ${INSTALL_PATH})
+    set(UPDATE_DISCONNECTED 1)
+else()
+    set(UPDATE_DISCONNECTED 0)
+endif()
 
-ExternalProject_Get_Property(cjson)
-include_directories(${CJSON_INCLUDE})
-link_directories(${CJSON_LIBRARY})
+include(ExternalProject)
+ExternalProject_Add(${PACKAGE_NAME}
+    PREFIX                 ${ROOT_PATH}
+    GIT_REPOSITORY         https://github.com/DaveGamble/cJSON.git
+    GIT_TAG                v1.7.15
+    BUILD_ALWAYS           OFF
+    LOG_DOWNLOAD           OFF
+    LOG_BUILD              OFF
+    LOG_INSTALL            OFF
+    UPDATE_DISCONNECTED    ${UPDATE_DISCONNECTED}
+    CMAKE_ARGS             ${CMAKE_ARGS}
+)
+ExternalProject_Get_Property(${PACKAGE_NAME})
+
+include_directories(${INCLUDE_PATH})
+link_directories(${LIBRARTY_PATH})

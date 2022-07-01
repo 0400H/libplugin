@@ -42,11 +42,6 @@ set(PROJECT_TEST ${PROJECT_ROOT}/test)
 set(PROJECT_EXAMPLES ${PROJECT_ROOT}/examples)
 set(PROJECT_3RDPARTY ${PROJECT_ROOT}/3rdparty)
 
-# set build dir
-# set(PROJECT_BUILD ${PROJECT_ROOT}/build)
-# set(LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BUILD}/lib)
-# set(RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BUILD}/output)
-
 # --------------------------------------------------------------------
 # section: cmake options
 # --------------------------------------------------------------------
@@ -78,7 +73,7 @@ include(${PROJECT_CMAKE}/status.cmake)
 
 include(${PROJECT_3RDPARTY}/fmtlib_fmt/CMakeLists.txt)
 include(${PROJECT_3RDPARTY}/gabime_spdlog/CMakeLists.txt)
-include(${PROJECT_3RDPARTY}/davegamble_cjson/CMakeLists.txt)
+# include(${PROJECT_3RDPARTY}/davegamble_cjson/CMakeLists.txt)
 
 # --------------------------------------------------------------------
 # section: add header dirs to search path
