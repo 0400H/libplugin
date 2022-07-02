@@ -20,6 +20,7 @@ TEST_CASE("factory") {
     auto factory = std::make_shared<libplugin::factory>(hello_path, RTLD_LAZY);
     factory->open(world_path, RTLD_LAZY, 2);
 
+    // Automatic symbol type derivation using macro FACTORY_VIEW_SYMBOL
     auto hello_func = FACTORY_VIEW_SYMBOL(factory, hello, hello_path, 0);
     auto world_func = FACTORY_VIEW_SYMBOL(factory, world, world_path, 0);
     auto plugin_func = FACTORY_VIEW_SYMBOL(factory, plugin, world_path, 1);

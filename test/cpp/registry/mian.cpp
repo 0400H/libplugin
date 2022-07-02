@@ -30,14 +30,22 @@ TEST_CASE("registry") {
 
     auto registry = std::make_shared<libplugin::registry>();
 
+    // Automatic symbol type derivation using macro SYMBOL_TYPE
     auto symbol_value = SYMBOL_TYPE(space::value);
     auto symbol_object = SYMBOL_TYPE(space::create_object);
-    spdlog::info("{} {}", symbol_value, symbol_object);
+    spdlog::info("symbol type -> {}, {}", symbol_value, symbol_object);
 
+    // register symbol to registry by useing different override policies
     registry->register_symbol(symbol_value, &space::value, 0);
-    registry->register_symbol(symbol_object, &space::create_object, 1);
+    registry->register_symbol(symbol_value, &space::value, 1);
+    registry->register_symbol(symbol_value, &space::value, 2);
 
-    auto value = ANY_CAST(&space::value, registry->view(symbol_value));
+    // use macro REGISTRY_REGISTER_SYMBOL to register symbol
+    REGISTRY_REGISTER_SYMBOL(registry, space::create_object, 1);
+    registry->register_symbol(symbol_object, &space::create_object, 0);
+
+    // use two macro to get symbol from registry
+    auto value = ANY_CAST_OBJ(&space::value, registry->view(symbol_value));
     auto object = REGISTRY_VIEW_SYMBOL(registry, space::create_object);
 
     space::value = 1;

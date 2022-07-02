@@ -13,21 +13,24 @@ status registry::register_symbol(std::string type, std::any arg, int policy) {
         spdlog::trace("Override policy: Not allowed to override.");
         if (this->container.count(type) == 0) {
             this->container[type] = arg;
+        } else {
+            spdlog::trace("Can not register {}.", type);
         }
     } else {
         spdlog::trace("Override policy: Not allowed to override, if find then return error.");
         if (this->container.count(type) == 0) {
             this->container[type] = arg;
         } else {
+            spdlog::trace("Can not register {}.", type);
             ret = S_Failed;
         };
     };
     return ret;
 };
 
-status registry::register_symbols(symbol_map& args, int mode) {
-    for (auto& arg : args) {
-        this->register_symbol(arg.first, arg.second, mode);
+status registry::register_symbols(symbol_table args, int policy) {
+    for (auto arg : args) {
+        this->register_symbol(arg.first, arg.second, policy);
     };
     return S_Success;
 };
@@ -51,7 +54,7 @@ std::any registry::view(std::string type) {
     return this->container.at(type);
 };
 
-symbol_map registry::view_all() {
+symbol_table registry::view_all() {
     return this->container;
 };
 
