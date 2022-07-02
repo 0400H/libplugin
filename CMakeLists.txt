@@ -80,6 +80,7 @@ include(${PROJECT_3RDPARTY}/gabime_spdlog/CMakeLists.txt)
 # --------------------------------------------------------------------
 
 include_directories(${PROJECT_INCLUDE})
+include_directories(${PROJECT_SRC})
 
 # --------------------------------------------------------------------
 # section: add source dirs to build path
