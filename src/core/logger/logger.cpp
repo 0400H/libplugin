@@ -6,6 +6,10 @@
 #include "libplugin/logger.hpp"
 
 namespace libplugin {
+const char* get_environment(const char* env_name) {
+    auto env_value = getenv(env_name);
+    return env_value ? env_value : "";
+}
 
 bool cmp_string(const char* arg1, const char* arg2) {
     if (arg1 == nullptr || arg1 == nullptr) {
@@ -15,7 +19,8 @@ bool cmp_string(const char* arg1, const char* arg2) {
     }
 }
 
-int get_logger_level(const char* env) {
+int get_log_level(const char* env_name) {
+    auto env = get_environment(env_name);
     int log_level = 2;
     if (env == nullptr || cmp_string(env, "")) {
         log_level = 2;
@@ -37,39 +42,48 @@ int get_logger_level(const char* env) {
     return log_level;
 }
 
-void set_logger_level(const char* env) {
-    auto env_value = getenv(env);
-    auto level = get_logger_level(env_value);
-    auto log_level = spdlog::level::info;
-    switch (level) {
+global_logger::global_logger(char* env_name) {
+    this->set_log_level(env_name);
+};
+
+void global_logger::set_log_level(const char* env_name=PROJECT_LOG_LEVEL) {
+    this->env_name = env_name ? env_name : "";
+    this->log_level = get_log_level(this->env_name);
+    auto spdlog_level = spdlog::level::info;
+    switch (this->log_level) {
         case 0:
-            log_level = spdlog::level::trace;
+            spdlog_level = spdlog::level::trace;
             break;
         case 1:
-            log_level = spdlog::level::debug;
+            spdlog_level = spdlog::level::debug;
             break;
         case 2:
-            log_level = spdlog::level::info;
+            spdlog_level = spdlog::level::info;
             break;
         case 3:
-            log_level = spdlog::level::warn;
+            spdlog_level = spdlog::level::warn;
             break;
         case 4:
-            log_level = spdlog::level::err;
+            spdlog_level = spdlog::level::err;
             break;
         case 5:
-            log_level = spdlog::level::critical;
+            spdlog_level = spdlog::level::critical;
             break;
         case 6:
-            log_level = spdlog::level::off;
+            spdlog_level = spdlog::level::off;
             break;
         default:
-            log_level = spdlog::level::info;
+            spdlog_level = spdlog::level::info;
             break;
     }
-    spdlog::set_level(log_level);
-    auto msg = fmt::format("env {} = {}\n", env, env_value?env_value:"");
-    spdlog::trace(msg);
+    spdlog::set_level(spdlog_level);
+    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
+}
+
+void global_logger::print_log_level() {
+    auto env_value = get_environment(this->env_name);
+    spdlog::info("env {} = {}, log level = {}\n", env_name, env_value, this->log_level);
 }
 
 }
+static libplugin::global_logger _G_LOGGER_(PROJECT_LOG_LEVEL);

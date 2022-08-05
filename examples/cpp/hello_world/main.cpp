@@ -2,28 +2,26 @@
 #include "my_plugin/my_plugin.hpp"
 
 int main() {
-    spdlog::set_level(spdlog::level::trace);
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
-
     // create my_plugin instance
     auto plugin_impl = std::make_shared<my_plugin>();
 
     // get symbol registry from instance
     auto registry = plugin_impl->view_all();
 
-    // print symbols of registry
+    // print symbols in registry
     for (auto& pair : registry->view_all()) {
         spdlog::info("registered symbol -> {}.", pair.first);
     };
 
     // get symbol from registry
-    // Fuzzy search symbol by using macro REGISTRY_VIEW_SYMBOL
-    auto hello_func = *REGISTRY_VIEW_SYMBOL(registry, hello);
-    auto world_func = *REGISTRY_VIEW_SYMBOL(registry, world);
+    auto hello_path = "hello/libhello.so";
+    auto world_path = "world/libworld.so";
+    // Fuzzy search symbol by using macro REGISTRY_VIEW_N_SYMBOL
+    auto hello_func = *REGISTRY_VIEW_N_SYMBOL(registry, hello);
+    auto world_func = *REGISTRY_VIEW_N_SYMBOL(registry, world);
     // Factory mode search symbol by using two macro
-    auto hello_plugin_identity = IDENTITY("hello/libhello.so", plugin);
-    auto hello_plugin_func = *ANY_CAST_OBJ(&plugin, registry->view(hello_plugin_identity));
-    auto world_plugin_func = *REGISTRY_VIEW_RAW_SYMBOL(registry, plugin, "world/libworld.so");
+    auto hello_plugin_func = *REGISTRY_VIEW_L_SYMBOL(registry, plugin, hello_path);
+    auto world_plugin_func = *REGISTRY_VIEW_L_SYMBOL(registry, plugin, world_path);
 
     // run func
     hello_func();
@@ -32,11 +30,11 @@ int main() {
     world_plugin_func();
 
     // unload symbol if u want
-    registry->unload_symbol(SYMBOL_TYPE(hello));
-    registry->unload_symbol("world/libworld.so@plugin@void ()");
-    registry->unload_symbol(hello_plugin_identity);
+    registry->unload_symbol(N_IDENTITY(hello));
+    registry->unload_symbol(L_IDENTITY(hello_path, plugin));
+    registry->unload_symbol("plugin#void ()@world/libworld.so");
 
-    // print symbols of registry
+    // print symbols in registry
     for (auto& pair : registry->view_all()) {
         spdlog::info("registered symbol -> {}.", pair.first);
     };

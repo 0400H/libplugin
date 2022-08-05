@@ -25,28 +25,25 @@ std::shared_ptr<object> create_object(std::string value) {
 };
 
 TEST_CASE("registry") {
-    spdlog::set_level(spdlog::level::trace);
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
-
     auto registry = std::make_shared<libplugin::registry>();
 
-    // Automatic symbol type derivation using macro SYMBOL_TYPE
-    auto symbol_value = SYMBOL_TYPE(space::value);
-    auto symbol_object = SYMBOL_TYPE(space::create_object);
-    spdlog::info("symbol type -> {}, {}", symbol_value, symbol_object);
+    // Automatic symbol type derivation using macro N_IDENTITY
+    auto symbol_value = N_IDENTITY(space::value);
+    auto symbol_object = N_IDENTITY(space::create_object);
+    spdlog::debug("symbol type -> {}, {}", symbol_value, symbol_object);
 
-    // register symbol to registry by useing different override policies
-    registry->register_symbol(symbol_value, &space::value, 0);
-    registry->register_symbol(symbol_value, &space::value, 1);
-    registry->register_symbol(symbol_value, &space::value, 2);
+    // using different override policies to register symbol
+    REGISTRY_REGISTER_SYMBOL(registry, space::value, libplugin::R_OVERRIDE);
+    REGISTRY_REGISTER_SYMBOL(registry, space::value, libplugin::R_FORBID);
+    REGISTRY_REGISTER_SYMBOL(registry, space::value, libplugin::R_STRICT);
 
-    // use macro REGISTRY_REGISTER_SYMBOL to register symbol
-    REGISTRY_REGISTER_SYMBOL(registry, space::create_object, 1);
-    registry->register_symbol(symbol_object, &space::create_object, 0);
+    // using macro REGISTRY_REGISTER_SYMBOL to register symbol
+    REGISTRY_REGISTER_SYMBOL(registry, space::create_object, libplugin::R_FORBID);
+    registry->register_symbol(symbol_object, &space::create_object, libplugin::R_OVERRIDE);
 
-    // use two macro to get symbol from registry
-    auto value = ANY_CAST_OBJ(&space::value, registry->view(symbol_value));
-    auto object = REGISTRY_VIEW_SYMBOL(registry, space::create_object);
+    // using two macro to get symbol from registry
+    auto value = REGISTRY_VIEW_N_SYMBOL(registry, space::value);
+    auto object = ANY_CAST_OBJ(&space::create_object, registry->view(symbol_object));
 
     space::value = 1;
     *value = -1;

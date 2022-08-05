@@ -11,19 +11,16 @@
 #include "world/world.hpp"
 
 TEST_CASE("factory") {
-    spdlog::set_level(spdlog::level::trace);
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
-
     auto hello_path = "hello/libtesthello.so";
     auto world_path = "world/libtestworld.so";
 
     auto factory = std::make_shared<libplugin::factory>(hello_path, RTLD_LAZY);
-    factory->open(world_path, RTLD_LAZY, 2);
+    factory->open(world_path, RTLD_LAZY, libplugin::F_L_STRICT);
 
     // Automatic symbol type derivation using macro FACTORY_VIEW_SYMBOL
-    auto hello_func = FACTORY_VIEW_SYMBOL(factory, hello, hello_path, 0);
-    auto world_func = FACTORY_VIEW_SYMBOL(factory, world, world_path, 0);
-    auto plugin_func = FACTORY_VIEW_SYMBOL(factory, plugin, world_path, 1);
+    auto hello_func = FACTORY_VIEW_SYMBOL(factory, hello, hello_path, libplugin::F_S_STRICT);
+    auto world_func = FACTORY_VIEW_SYMBOL(factory, world, world_path, libplugin::F_S_STRICT);
+    auto plugin_func = FACTORY_VIEW_SYMBOL(factory, plugin, world_path, libplugin::F_S_FUZZY);
 
     CHECK( (hello_func() == "hello") );
     CHECK( (world_func() == "world") );

@@ -1,8 +1,8 @@
 #ifndef LIBPLUGIN_REGISTRY_H
 #define LIBPLUGIN_REGISTRY_H
 
-#include <unordered_map>
 #include <memory>
+#include <unordered_map>
 
 #include "library.hpp"
 
@@ -11,6 +11,12 @@ namespace libplugin {
 // https://blog.csdn.net/CaspianSea/article/details/46616819
 
 typedef std::unordered_map<std::string, std::any> symbol_table;
+
+enum registry_policy {
+    R_OVERRIDE = 0,  // register symbol with override
+    R_FORBID = 1,    // register symbol without override
+    R_STRICT = 2,    // register symbol without override, and return status
+};
 
 class registry {
 public:
@@ -28,12 +34,12 @@ protected:
 }
 
 #define REGISTRY_REGISTER_SYMBOL(REGISTRY, SYMBOL, POLICY) \
-    REGISTRY->register_symbol(SYMBOL_TYPE(SYMBOL), &SYMBOL, POLICY)
+    REGISTRY->register_symbol(N_IDENTITY(SYMBOL), &SYMBOL, POLICY)
 
-#define REGISTRY_VIEW_SYMBOL(REGISTRY, SYMBOL) \
-    ANY_CAST_OBJ(&SYMBOL, REGISTRY->view(SYMBOL_TYPE(SYMBOL)))
+#define REGISTRY_VIEW_N_SYMBOL(REGISTRY, SYMBOL) \
+    ANY_CAST_OBJ(&SYMBOL, REGISTRY->view(N_IDENTITY(SYMBOL)))
 
-#define REGISTRY_VIEW_RAW_SYMBOL(REGISTRY, SYMBOL, LIBRARY) \
-    ANY_CAST_OBJ(&SYMBOL, REGISTRY->view(IDENTITY(LIBRARY, SYMBOL)))
+#define REGISTRY_VIEW_L_SYMBOL(REGISTRY, SYMBOL, LIBRARY) \
+    ANY_CAST_OBJ(&SYMBOL, REGISTRY->view(L_IDENTITY(LIBRARY, SYMBOL)))
 
 #endif

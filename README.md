@@ -51,10 +51,11 @@ From low to high degree of abstraction.
 It responsible for controlling the life cycle of a shared library and providing symbol acquisition interfaces.
 
 ```c++
-auto lib = std::make_shared<libplugin::library>("test_lib/libtest_lib.so", RTLD_LAZY);
+#include "test_lib/test_lib.hpp"
 
-auto func = reinterpret_cast<decltype(&test_lib)>(lib->view("test_lib"));
-// auto func = reinterpret_cast<std::string (*)(std::string)>(lib->view("test_lib"));
+auto lib = std::make_shared<libplugin::library>("test_lib/libtest_lib.so", RTLD_LAZY);
+auto func = LIB_VIEW_SYMBOL(lib, test_lib);
+auto str = func("hello_world");
 ```
 
 ### libplugin::factory
@@ -65,13 +66,14 @@ As a library factory, it provides management and symbol acquisition policies for
 auto hello_path = "hello/libtesthello.so";
 auto world_path = "world/libtestworld.so";
 
+// using factory to open library with policy
 auto factory = std::make_shared<libplugin::factory>(hello_path, RTLD_LAZY);
-factory->open(world_path, RTLD_LAZY, 2);
+factory->open(world_path, RTLD_LAZY, libplugin::F_L_STRICT);
 
-// Automatic symbol type derivation using macro FACTORY_VIEW_SYMBOL
-auto hello_func = FACTORY_VIEW_SYMBOL(factory, hello, hello_path, 0);
-auto world_func = FACTORY_VIEW_SYMBOL(factory, world, world_path, 0);
-auto plugin_func = FACTORY_VIEW_SYMBOL(factory, plugin, world_path, 1);
+// using macro FACTORY_VIEW_SYMBOL to find func with policy
+auto hello_func = FACTORY_VIEW_SYMBOL(factory, hello, hello_path, libplugin::F_S_STRICT);
+auto world_func = FACTORY_VIEW_SYMBOL(factory, world, world_path, libplugin::F_S_STRICT);
+auto plugin_func = FACTORY_VIEW_SYMBOL(factory, plugin, world_path, libplugin::F_S_FUZZY);
 ```
 
 ### libplugin::registry
@@ -81,22 +83,23 @@ Register all the required symbols to the registry for easy retrieval and use.
 ```c++
 auto registry = std::make_shared<libplugin::registry>();
 
-// Automatic symbol type derivation using macro SYMBOL_TYPE
-auto symbol_value = SYMBOL_TYPE(space::value);
-auto symbol_object = SYMBOL_TYPE(space::create_object);
+// Automatic symbol type derivation using macro N_IDENTITY
+auto symbol_value = N_IDENTITY(space::value);
+auto symbol_object = N_IDENTITY(space::create_object);
+spdlog::info("symbol type -> {}, {}", symbol_value, symbol_object);
 
-// register symbol to registry by useing different override policies
-registry->register_symbol(symbol_value, &space::value, 0);
-registry->register_symbol(symbol_value, &space::value, 1);
-registry->register_symbol(symbol_value, &space::value, 2);
+// using different override policies to register symbol
+REGISTRY_REGISTER_SYMBOL(registry, space::value, libplugin::R_OVERRIDE);
+REGISTRY_REGISTER_SYMBOL(registry, space::value, libplugin::R_FORBID);
+REGISTRY_REGISTER_SYMBOL(registry, space::value, libplugin::R_STRICT);
 
-// use macro REGISTRY_REGISTER_SYMBOL to register symbol
-REGISTRY_REGISTER_SYMBOL(registry, space::create_object, 1);
-registry->register_symbol(symbol_object, &space::create_object, 0);
+// using macro REGISTRY_REGISTER_SYMBOL to register symbol
+REGISTRY_REGISTER_SYMBOL(registry, space::create_object, libplugin::R_FORBID);
+registry->register_symbol(symbol_object, &space::create_object, libplugin::R_OVERRIDE);
 
-// use two macro to get symbol from registry
-auto value = ANY_CAST_OBJ(&space::value, registry->view(symbol_value));
-auto object = REGISTRY_VIEW_SYMBOL(registry, space::create_object);
+// using two macro to get symbol from registry
+auto value = REGISTRY_VIEW_N_SYMBOL(registry, space::value);
+auto object = ANY_CAST_OBJ(&space::create_object, registry->view(symbol_object));
 ```
 
 ### libplugin::plugin
@@ -104,7 +107,7 @@ auto object = REGISTRY_VIEW_SYMBOL(registry, space::create_object);
 Provide templates for workflow and resource management of customized plugin to increase user perception transparency and provide additional capabilities.
 
 
-Custom plugin
+Customed plugin
 
 ```c++
 class my_plugin : public libplugin::plugin_base {
@@ -128,19 +131,19 @@ libplugin::status my_plugin::init() {
     // load libs to factory
     auto hello_path = "hello/libhello.so";
     auto world_path = "world/libworld.so";
-    this->factory->open("hello/libhello.so", RTLD_LAZY, 0);
-    this->factory->open("world/libworld.so", RTLD_LAZY, 1);
+    this->factory->open(hello_path, RTLD_LAZY, libplugin::F_L_DEFAULT);
+    this->factory->open(world_path, RTLD_LAZY, libplugin::F_L_OVERRIDE);
 
-    // get symbols map
+    // get symbols table
     libplugin::symbol_table hello_world_symbol = {
-        FACTORY_SYMBOL_PAIR(this->factory, hello, hello_path, 0),
-        FACTORY_SYMBOL_PAIR(this->factory, world, hello_path, 1),
-        FACTORY_IDENTITY_PAIR(this->factory, plugin, hello_path),
-        FACTORY_IDENTITY_PAIR(this->factory, plugin, world_path),
+        FACTORY_N_SYMBOL_PAIR(this->factory, hello, hello_path, libplugin::F_S_STRICT),
+        FACTORY_N_SYMBOL_PAIR(this->factory, world, hello_path, libplugin::F_S_FUZZY),
+        FACTORY_L_SYMBOL_PAIR(this->factory, plugin, hello_path),
+        FACTORY_L_SYMBOL_PAIR(this->factory, plugin, world_path),
     };
 
     // register symbols to registry
-    auto status = this->registry->register_symbols(hello_world_symbol, 0);
+    auto status = this->registry->register_symbols(hello_world_symbol, libplugin::R_OVERRIDE);
 
     // print status
     libplugin::parse_status(status);
@@ -152,28 +155,26 @@ Use customed plugin
 
 ```c++
 int main() {
-    spdlog::set_level(spdlog::level::trace);
-    spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e %l %t] %v");
-
     // create my_plugin instance
     auto plugin_impl = std::make_shared<my_plugin>();
 
     // get symbol registry from instance
     auto registry = plugin_impl->view_all();
 
-    // print symbols of registry
+    // print symbols in registry
     for (auto& pair : registry->view_all()) {
         spdlog::info("registered symbol -> {}.", pair.first);
     };
 
     // get symbol from registry
-    // Fuzzy search symbol by using macro REGISTRY_VIEW_SYMBOL
-    auto hello_func = *REGISTRY_VIEW_SYMBOL(registry, hello);
-    auto world_func = *REGISTRY_VIEW_SYMBOL(registry, world);
-    // Factory mode search symbol by using two macro
-    auto hello_plugin_identity = IDENTITY("hello/libhello.so", plugin);
-    auto hello_plugin_func = *ANY_CAST_OBJ(&plugin, registry->view(hello_plugin_identity));
-    auto world_plugin_func = *REGISTRY_VIEW_RAW_SYMBOL(registry, plugin, "world/libworld.so");
+    auto hello_path = "hello/libhello.so";
+    auto world_path = "world/libworld.so";
+    // Fuzzy search symbol by using macro REGISTRY_VIEW_N_SYMBOL
+    auto hello_func = *REGISTRY_VIEW_N_SYMBOL(registry, hello);
+    auto world_func = *REGISTRY_VIEW_N_SYMBOL(registry, world);
+    // search raw symbol by using macro REGISTRY_VIEW_L_SYMBOL
+    auto hello_plugin_func = *REGISTRY_VIEW_L_SYMBOL(registry, plugin, hello_path);
+    auto world_plugin_func = *REGISTRY_VIEW_L_SYMBOL(registry, plugin, world_path);
 
     // run func
     hello_func();
@@ -182,9 +183,9 @@ int main() {
     world_plugin_func();
 
     // unload symbol if u want
-    registry->unload_symbol(SYMBOL_TYPE(hello));
-    registry->unload_symbol("world/libworld.so@plugin@void ()");
-    registry->unload_symbol(hello_plugin_identity);
+    registry->unload_symbol(N_IDENTITY(hello));
+    registry->unload_symbol(L_IDENTITY(hello_path, plugin));
+    registry->unload_symbol("plugin#void ()@world/libworld.so");
     return 0;
 }
 ```

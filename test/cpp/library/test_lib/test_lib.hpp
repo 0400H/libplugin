@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 // LIBPLUGIN_API
-std::string LIBRARY_API test_lib(std::string);
+std::string LIBRARY_API test_func(std::string);
 
 #ifdef __cplusplus
 }

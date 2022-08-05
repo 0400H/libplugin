@@ -5,7 +5,7 @@ extern "C" {
 #endif
 
 // LIBPLUGIN_API
-std::string LIBRARY_API test_lib(std::string arg) {
+std::string LIBRARY_API test_func(std::string arg) {
     return arg;
 };
 

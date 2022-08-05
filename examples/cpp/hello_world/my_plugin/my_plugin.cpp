@@ -24,19 +24,19 @@ libplugin::status my_plugin::init() {
     // load libs to factory
     auto hello_path = "hello/libhello.so";
     auto world_path = "world/libworld.so";
-    this->factory->open("hello/libhello.so", RTLD_LAZY, 0);
-    this->factory->open("world/libworld.so", RTLD_LAZY, 1);
+    this->factory->open(hello_path, RTLD_LAZY, libplugin::F_L_DEFAULT);
+    this->factory->open(world_path, RTLD_LAZY, libplugin::F_L_OVERRIDE);
 
-    // get symbols map
-    libplugin::symbol_table hello_world_symbol = {
-        FACTORY_SYMBOL_PAIR(this->factory, hello, hello_path, 0),
-        FACTORY_SYMBOL_PAIR(this->factory, world, hello_path, 1),
-        FACTORY_IDENTITY_PAIR(this->factory, plugin, hello_path),
-        FACTORY_IDENTITY_PAIR(this->factory, plugin, world_path),
+    // get symbols table
+    libplugin::symbol_table hello_world_symbols = {
+        FACTORY_N_SYMBOL_PAIR(this->factory, hello, hello_path, libplugin::F_S_STRICT),
+        FACTORY_N_SYMBOL_PAIR(this->factory, world, hello_path, libplugin::F_S_FUZZY),
+        FACTORY_L_SYMBOL_PAIR(this->factory, plugin, hello_path),
+        FACTORY_L_SYMBOL_PAIR(this->factory, plugin, world_path),
     };
 
     // register symbols to registry
-    auto status = this->registry->register_symbols(hello_world_symbol, 0);
+    auto status = this->registry->register_symbols(hello_world_symbols, libplugin::R_OVERRIDE);
     libplugin::parse_status(status);
 
     /*

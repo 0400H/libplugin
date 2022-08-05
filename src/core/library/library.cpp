@@ -13,7 +13,7 @@ library::library() : ptr(nullptr) {};
 
 library::library(const char* file, int mode) : ptr(nullptr) {
     if (this->open(file, mode) != S_Success) {
-        std::runtime_error("Can not open library!");
+        std::runtime_error("can not open library!");
     };
 }
 
@@ -55,7 +55,7 @@ void* library::view(const char* name) {
     auto func = dlsym(this->ptr, name);
     auto error = dlerror();
     if (error != nullptr || this->ptr == nullptr) {
-        spdlog::trace("Not find symbol {}, error: {}", name, error);
+        spdlog::trace("library not find symbol {}, error: {}", name, error);
         return nullptr;
     } else {
         return func;
@@ -65,6 +65,10 @@ void* library::view(const char* name) {
 void* library::handle() {
     std::lock_guard<std::mutex> lock(this->mtx);
     return this->ptr;
+}
+
+std::string library::path() {
+    return this->name;
 }
 
 std::string cxx_demangle(const char* name) {
