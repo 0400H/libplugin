@@ -46,7 +46,7 @@ global_logger::global_logger(char* env_name) {
     this->set_log_level(env_name);
 };
 
-void global_logger::set_log_level(const char* env_name=PROJECT_LOG_LEVEL) {
+void global_logger::set_log_level(const char* env_name) {
     this->env_name = env_name ? env_name : "";
     this->log_level = get_log_level(this->env_name);
     auto spdlog_level = spdlog::level::info;

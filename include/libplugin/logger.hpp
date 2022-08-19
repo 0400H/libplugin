@@ -14,9 +14,7 @@ int get_log_level(const char* env=PROJECT_LOG_LEVEL);
 class global_logger {
 public:
     global_logger(char* env_name);
-
     void set_log_level(const char* env=PROJECT_LOG_LEVEL);
-
     void print_log_level();
 protected:
     char* env_name = "";
